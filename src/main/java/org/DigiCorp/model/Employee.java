@@ -5,6 +5,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+
 import java.time.LocalDate;
 
 
@@ -12,22 +13,22 @@ import java.time.LocalDate;
 @Table(name="employees")
 public class Employee {
     @Id
-    @Column(name = "emp_no", nullable = false)
-    private Integer empNo;
+    @Column(name = "emp_no")
+    private int empNo;
 
-    @Column(name = "birth_date", nullable = false)
+    @Column(name = "birth_date")
     private String birthDate;
 
-    @Column(name = "first_name", nullable = false, length = 14)
+    @Column(name = "first_name")
     private String firstName;
 
-    @Column(name = "last_name", nullable = false, length = 16)
+    @Column(name = "last_name")
     private String lastName;
 
-    @Column(name = "gender", nullable = false)
+    @Column(name = "gender")
     private String gender;
 
-    @Column(name = "hire_date", nullable = false)
+    @Column(name = "hire_date")
     private String hireDate;
 
     // --- Constructors ---
@@ -45,11 +46,11 @@ public class Employee {
 
     // --- Getters and Setters ---
 
-    public Integer getEmpNo() {
+    public int getEmpNo() {
         return empNo;
     }
 
-    public void setEmpNo(Integer empNo) {
+    public void setEmpNo(int empNo) {
         this.empNo = empNo;
     }
 

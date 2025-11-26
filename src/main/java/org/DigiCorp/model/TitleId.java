@@ -1,0 +1,53 @@
+package org.DigiCorp.model;
+
+import java.io.Serializable;
+import java.util.Objects;
+
+public class TitleId implements Serializable {
+    private int empNo;
+    private String title;
+    private String fromDate; // using String for simplicity
+
+    public TitleId() {}
+
+    public TitleId(int empNo, String title, String fromDate) {
+        this.empNo = empNo;
+        this.title = title;
+        this.fromDate = fromDate;
+    }
+
+    public int getEmpNo() {
+        return empNo;
+    }
+
+    public void setEmpNo(int empNo) {
+        this.empNo = empNo;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getFromDate() {
+        return fromDate;
+    }
+
+    public void setFromDate(String fromDate) {
+        this.fromDate = fromDate;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof TitleId titleId)) return false;
+        return empNo == titleId.empNo && Objects.equals(title, titleId.title) && Objects.equals(fromDate, titleId.fromDate);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(empNo, title, fromDate);
+    }
+}
