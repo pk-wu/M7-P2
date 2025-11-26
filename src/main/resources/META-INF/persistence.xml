@@ -20,6 +20,10 @@
         -->
         <class>org.DigiCorp.model.Employee</class>
         <class>org.DigiCorp.model.Department</class>
+        <class>org.DigiCorp.model.Salary</class>
+        <class>org.DigiCorp.model.Title</class>
+        <class>org.DigiCorp.model.DeptEmp</class>
+        <class>org.DigiCorp.model.DeptManager</class>
 
         <properties>
             <property name="jakarta.persistence.jdbc.driver" 
