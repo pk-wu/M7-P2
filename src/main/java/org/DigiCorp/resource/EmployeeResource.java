@@ -6,6 +6,7 @@ import jakarta.persistence.Persistence;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.DigiCorp.dto.EmployeeDTO;
 import org.DigiCorp.model.Department;
 import org.DigiCorp.model.Employee;
 import org.DigiCorp.service.EmployeeService;
@@ -18,12 +19,11 @@ import java.util.Map;
 @Path("/employees")
 public class EmployeeResource {
 
-    private EmployeeService employeeService;
+    private final EmployeeService employeeService;
 
     // create the employeeService for us to use
     public EmployeeResource() {
-        JPAUtil jpaUtil = new JPAUtil();
-        this.employeeService = new EmployeeService(jpaUtil.getEntityManager());
+        this.employeeService = new EmployeeService();
     }
 
     // endpoint #1
@@ -38,10 +38,10 @@ public class EmployeeResource {
 
     // endpoint #2
     @GET
-    @Path("/getEmployeeRecord/{empNo}")
+    @Path("/getEmployeeRecord/")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getEmployeeRecord(@PathParam("empNo") int empNo) {
-        Employee emp = employeeService.findEmployee(empNo);
+    public Response getEmployeeRecord(@QueryParam("empNo") int empNo) {
+        EmployeeDTO emp = employeeService.getEmployeeRecords(empNo);
         if (emp == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
@@ -58,7 +58,6 @@ public class EmployeeResource {
 
         // (info to return: employee number, first
         //name, last name and hire date)
-
         return Response.ok().build();
     }
 
