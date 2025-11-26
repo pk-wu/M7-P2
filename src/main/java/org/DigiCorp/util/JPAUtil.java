@@ -8,17 +8,33 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class JPAUtil {
-    private final EntityManagerFactory emf;
-    private final String dbName = "employees";
-    public JPAUtil() {
-        Map<String, String> persistenceMap = new HashMap<>();
-        persistenceMap.put("jakarta.persistence.jdbc.url",
-                "jdbc:mariadb://localhost:3306/" + dbName);
+//    private final String dbName = "employees";
+//    public JPAUtil() {
+//        Map<String, String> persistenceMap = new HashMap<>();
+//        persistenceMap.put("jakarta.persistence.jdbc.url",
+//                "jdbc:mariadb://localhost:3306/" + dbName);
+//
+//        this.emf = Persistence.createEntityManagerFactory("EmployeeService", persistenceMap);
+//    }
 
-        this.emf = Persistence.createEntityManagerFactory("EmployeeService", persistenceMap);
+    private static EntityManagerFactory emf;
+
+    private JPAUtil(){}
+
+    // Lazy initialisation of factory when needed
+    private static EntityManagerFactory getEntityManagerFactory() {
+        if (emf == null) {
+            Map<String, String> persistenceMap = new HashMap<>();
+            persistenceMap.put("jakarta.persistence.jdbc.url",
+                    "jdbc:mariadb://localhost:3306/employees");
+
+            emf = Persistence.createEntityManagerFactory("EmployeeService", persistenceMap);
+        }
+        return emf;
     }
 
-    public EntityManager getEntityManager() {
-        return emf.createEntityManager();
+    public static EntityManager getEntityManager() {
+        return getEntityManagerFactory().createEntityManager();
     }
+
 }
