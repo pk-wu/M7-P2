@@ -8,14 +8,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class JPAUtil {
-//    private final String dbName = "employees";
-//    public JPAUtil() {
-//        Map<String, String> persistenceMap = new HashMap<>();
-//        persistenceMap.put("jakarta.persistence.jdbc.url",
-//                "jdbc:mariadb://localhost:3306/" + dbName);
-//
-//        this.emf = Persistence.createEntityManagerFactory("EmployeeService", persistenceMap);
-//    }
 
     private static EntityManagerFactory emf;
 
