@@ -1,5 +1,7 @@
 package org.DigiCorp.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -11,6 +13,7 @@ public class Title {
 
     @Id
     @Column(name="emp_no")
+    @JsonIgnore
     private int empNo;
 
     @Id
@@ -25,8 +28,9 @@ public class Title {
     private LocalDate toDate;
 
     // mapping
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "emp_no", referencedColumnName = "emp_no")
+    @JsonBackReference
     private Employee employee;
 
     // constructors
@@ -57,16 +61,16 @@ public class Title {
         this.title = title;
     }
 
-    public LocalDate getFromDate() {
-        return fromDate;
+    public String getFromDate() {
+        return fromDate.toString();
     }
 
     public void setFromDate(LocalDate fromDate) {
         this.fromDate = fromDate;
     }
 
-    public LocalDate getToDate() {
-        return toDate;
+    public String getToDate() {
+        return toDate.toString();
     }
 
     public void setToDate(LocalDate toDate) {

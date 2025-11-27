@@ -1,6 +1,8 @@
 package org.DigiCorp.model;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -12,6 +14,7 @@ public class Salary {
 
     @Id
     @Column(name="emp_no")
+    @JsonIgnore
     private int empNo;
 
     @Id
@@ -26,8 +29,9 @@ public class Salary {
 
 
     // mapping
-    @ManyToOne(fetch =  FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "emp_no", referencedColumnName = "emp_no")
+    @JsonBackReference
     private Employee employee;
 
     public Salary() {
@@ -49,16 +53,16 @@ public class Salary {
         this.empNo = empNo;
     }
 
-    public LocalDate getFromDate() {
-        return fromDate;
+    public String getFromDate() {
+        return fromDate.toString();
     }
 
     public void setFromDate(LocalDate fromDate) {
         this.fromDate = fromDate;
     }
 
-    public LocalDate getToDate() {
-        return toDate;
+    public String getToDate() {
+        return toDate.toString();
     }
 
     public void setToDate(LocalDate toDate) {
