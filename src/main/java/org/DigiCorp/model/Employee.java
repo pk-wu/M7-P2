@@ -1,6 +1,8 @@
 package org.DigiCorp.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -8,7 +10,7 @@ import java.util.List;
 
 
 @Entity
-@Table(name="employees")
+@Table(name = "employees")
 public class Employee {
     @Id
     @Column(name = "emp_no")
@@ -30,23 +32,27 @@ public class Employee {
     private LocalDate hireDate;
 
 
-
     // --- Mapping ---
-    @OneToMany(mappedBy="employee", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "employee", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Salary> salaryList;
 
-    @OneToMany(mappedBy="employee", fetch=FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "employee", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Title> titleList;
 
-    @OneToMany(mappedBy="employee", fetch=FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "employee", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<DeptEmp> deptEmpList;
 
-    @OneToMany(mappedBy="employee", fetch=FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "employee", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<DeptManager> deptManagerList;
 
 
     // --- Constructors ---
-    public Employee() {}
+    public Employee() {
+    }
 
     public Employee(int empNo, LocalDate birthDate, String firstName,
                     String lastName, String gender, LocalDate hireDate) {
@@ -59,7 +65,6 @@ public class Employee {
     }
 
     // --- Getters and Setters ---
-
     public int getEmpNo() {
         return empNo;
     }
@@ -68,8 +73,8 @@ public class Employee {
         this.empNo = empNo;
     }
 
-    public LocalDate getBirthDate() {
-        return birthDate;
+    public String getBirthDate() {
+        return birthDate.toString();
     }
 
     public void setBirthDate(LocalDate birthDate) {
@@ -100,8 +105,8 @@ public class Employee {
         this.gender = gender;
     }
 
-    public LocalDate getHireDate() {
-        return hireDate;
+    public String getHireDate() {
+        return hireDate.toString();
     }
 
     public void setHireDate(LocalDate hireDate) {
