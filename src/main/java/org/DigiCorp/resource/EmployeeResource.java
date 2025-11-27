@@ -1,21 +1,14 @@
 package org.DigiCorp.resource;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import org.DigiCorp.dto.EmployeeDTO;
 import org.DigiCorp.dto.EmployeeRecordDTO;
 import org.DigiCorp.model.Department;
 import org.DigiCorp.model.Employee;
 import org.DigiCorp.service.EmployeeService;
-import org.DigiCorp.util.JPAUtil;
-
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
 
 @Path("/employees")
 public class EmployeeResource {
@@ -28,21 +21,22 @@ public class EmployeeResource {
     }
 
     // endpoint #1
+    // usage: http://localhost:8090/M7_P2_war_exploded/api/employees/getAllDepartments
     @GET
     @Path("/getAllDepartments")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllDepartments() {
         List<Department> list = employeeService.findAllDepartments();
-        // return the response with appropriate HTTP codes
         return Response.ok().entity(list).build();
     }
 
     // endpoint #2
+    // usage: http://localhost:8090/M7_P2_war_exploded/api/employees/getEmployeeRecord/?empNo=99999
     @GET
     @Path("/getEmployeeRecord/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getEmployeeRecord(@QueryParam("empNo") int empNo) {
-        EmployeeDTO emp = employeeService.getEmployeeRecords(empNo);
+        Employee emp = employeeService.getEmployeeRecords(empNo);
         if (emp == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
@@ -50,15 +44,15 @@ public class EmployeeResource {
     }
 
     // endpoint #3
+    // usage: (1) defaulted to page 1 (2) specifying page number
+    // (1) http://localhost:8090/M7_P2_war_exploded/api/employees/getAllEmployeeRecords/?departmentNo=d003
+    // (2) http://localhost:8090/M7_P2_war_exploded/api/employees/getAllEmployeeRecords/?departmentNo=d003&page=10
     @GET
     @Path("/getAllEmployeeRecords/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllEmployeeRecords(
             @QueryParam("departmentNo") String departmentNo,
             @QueryParam("page") @DefaultValue("1") int page) {
-
-        // (info to return: employee number, first
-        //name, last name and hire date)
         List<EmployeeRecordDTO> empRecords = employeeService.getAllEmployeeRecordsList(departmentNo, page);
         return Response.ok().entity(empRecords).build();
     }
