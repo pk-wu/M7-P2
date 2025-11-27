@@ -10,8 +10,6 @@ public class EmployeeRecordDTO {
     private String lastName;
 
     // constructors
-
-
     public EmployeeRecordDTO() {
     }
 
@@ -31,8 +29,8 @@ public class EmployeeRecordDTO {
         this.empNo = empNo;
     }
 
-    public LocalDate getHireDate() {
-        return hireDate;
+    public String getHireDate() {
+        return hireDate.toString();
     }
 
     public void setHireDate(LocalDate hireDate) {
