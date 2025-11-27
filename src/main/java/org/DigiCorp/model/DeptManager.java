@@ -2,6 +2,8 @@ package org.DigiCorp.model;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
+
 @Entity
 @Table(name="dept_manager")
 @IdClass(DeptManagerId.class)
@@ -16,19 +18,33 @@ public class DeptManager {
     private String deptNo;
 
     @Column(name="from_date")
-    private String fromDate;
+    private LocalDate fromDate;
 
     @Column(name="to_date")
-    private String toDate;
+    private LocalDate toDate;
 
+    // mapping
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "emp_no", referencedColumnName = "emp_no")
+    private Employee employee;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "dept_no", referencedColumnName = "dept_no")
+    private Department department;
+
+
+
+    // constructors
     public DeptManager() {}
 
-    public DeptManager(int empNo, String deptNo, String fromDate, String toDate) {
+    public DeptManager(int empNo, String deptNo, LocalDate fromDate, LocalDate toDate) {
         this.empNo = empNo;
         this.deptNo = deptNo;
         this.fromDate = fromDate;
         this.toDate = toDate;
     }
+
+    // getters and setters
 
     public int getEmpNo() {
         return empNo;
@@ -46,20 +62,36 @@ public class DeptManager {
         this.deptNo = deptNo;
     }
 
-    public String getFromDate() {
+    public LocalDate getFromDate() {
         return fromDate;
     }
 
-    public void setFromDate(String fromDate) {
+    public void setFromDate(LocalDate fromDate) {
         this.fromDate = fromDate;
     }
 
-    public String getToDate() {
+    public LocalDate getToDate() {
         return toDate;
     }
 
-    public void setToDate(String toDate) {
+    public void setToDate(LocalDate toDate) {
         this.toDate = toDate;
+    }
+
+    public Employee getEmployee() {
+        return employee;
+    }
+
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
+    }
+
+    public Department getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(Department department) {
+        this.department = department;
     }
 
     @Override
@@ -67,8 +99,10 @@ public class DeptManager {
         return "DeptManager{" +
                 "empNo=" + empNo +
                 ", deptNo='" + deptNo + '\'' +
-                ", fromDate='" + fromDate + '\'' +
-                ", toDate='" + toDate + '\'' +
+                ", fromDate=" + fromDate +
+                ", toDate=" + toDate +
+                ", employee=" + employee +
+                ", department=" + department +
                 '}';
     }
 }

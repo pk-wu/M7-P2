@@ -14,6 +14,8 @@ public class DeptEmpId implements Serializable {
         this.deptNo = deptNo;
     }
 
+    // getters and setters
+
     public int getEmpNo() {
         return empNo;
     }
@@ -30,6 +32,7 @@ public class DeptEmpId implements Serializable {
         this.deptNo = deptNo;
     }
 
+    // equals and hashcode
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof DeptEmpId deptEmpId)) return false;

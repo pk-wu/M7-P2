@@ -1,10 +1,9 @@
 package org.DigiCorp.model;
 
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+
+import java.util.List;
 
 @Entity
 @Table(name="departments")
@@ -16,6 +15,15 @@ public class Department {
     @Column(name="dept_name")
     private String deptName;
 
+    // mapping
+    @OneToMany(mappedBy = "department", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<DeptEmp> deptEmpList;
+
+    @OneToMany(mappedBy = "department", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<DeptManager> deptManagerList;
+
+
+    // constructors
     public Department() {
     }
 
@@ -34,5 +42,31 @@ public class Department {
 
     public void setDeptName(String deptName) {
         this.deptName = deptName;
+    }
+
+    public List<DeptEmp> getDeptEmpList() {
+        return deptEmpList;
+    }
+
+    public void setDeptEmpList(List<DeptEmp> deptEmpList) {
+        this.deptEmpList = deptEmpList;
+    }
+
+    public List<DeptManager> getDeptManagerList() {
+        return deptManagerList;
+    }
+
+    public void setDeptManagerList(List<DeptManager> deptManagerList) {
+        this.deptManagerList = deptManagerList;
+    }
+
+    @Override
+    public String toString() {
+        return "Department{" +
+                "deptNo='" + deptNo + '\'' +
+                ", deptName='" + deptName + '\'' +
+                ", deptEmpList=" + deptEmpList +
+                ", deptManagerList=" + deptManagerList +
+                '}';
     }
 }

@@ -2,6 +2,8 @@ package org.DigiCorp.model;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
+
 @Entity
 @Table(name="titles")
 @IdClass(TitleId.class)
@@ -17,19 +19,27 @@ public class Title {
 
     @Id
     @Column(name="from_date")
-    private String fromDate;
+    private LocalDate fromDate;
 
     @Column(name="to_date")
-    private String toDate;
+    private LocalDate toDate;
 
+    // mapping
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "emp_no", referencedColumnName = "emp_no")
+    private Employee employee;
+
+    // constructors
     public Title() {}
 
-    public Title(int empNo, String title, String fromDate, String toDate) {
+    public Title(int empNo, String title, LocalDate fromDate, LocalDate toDate) {
         this.empNo = empNo;
         this.title = title;
         this.fromDate = fromDate;
         this.toDate = toDate;
     }
+
+    // getters and setters
 
     public int getEmpNo() {
         return empNo;
@@ -47,20 +57,28 @@ public class Title {
         this.title = title;
     }
 
-    public String getFromDate() {
+    public LocalDate getFromDate() {
         return fromDate;
     }
 
-    public void setFromDate(String fromDate) {
+    public void setFromDate(LocalDate fromDate) {
         this.fromDate = fromDate;
     }
 
-    public String getToDate() {
+    public LocalDate getToDate() {
         return toDate;
     }
 
-    public void setToDate(String toDate) {
+    public void setToDate(LocalDate toDate) {
         this.toDate = toDate;
+    }
+
+    public Employee getEmployee() {
+        return employee;
+    }
+
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
     }
 
     @Override
@@ -68,8 +86,9 @@ public class Title {
         return "Title{" +
                 "empNo=" + empNo +
                 ", title='" + title + '\'' +
-                ", fromDate='" + fromDate + '\'' +
-                ", toDate='" + toDate + '\'' +
+                ", fromDate=" + fromDate +
+                ", toDate=" + toDate +
+                ", employee=" + employee +
                 '}';
     }
 }

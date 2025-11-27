@@ -2,10 +2,7 @@ package org.DigiCorp.service;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
-import org.DigiCorp.dto.DepartmentDTO;
-import org.DigiCorp.dto.EmployeeDTO;
-import org.DigiCorp.dto.SalaryDTO;
-import org.DigiCorp.dto.TitleDTO;
+import org.DigiCorp.dto.*;
 import org.DigiCorp.model.*;
 import org.DigiCorp.util.JPAUtil;
 
@@ -87,4 +84,20 @@ public class EmployeeService {
         }
     }
 
+    // service for endpoint #3
+    public List<EmployeeRecordDTO> getAllEmployeeRecordsList(String deptNo, int page) {
+        try (EntityManager em = JPAUtil.getEntityManager()) {
+            // construct return object
+            List<EmployeeRecordDTO> results = em.createQuery(
+                            "SELECT new org.DigiCorp.dto.EmployeeRecordDTO(e.empNo, e.hireDate, e.firstName, e.lastName) " +
+                                    "FROM DeptEmp de JOIN Employee e ON de.empNo = e.empNo " +
+                                    "WHERE de.deptNo = :deptNo ORDER BY e.empNo",
+                            EmployeeRecordDTO.class)
+                    .setParameter("deptNo", deptNo)
+                    .setFirstResult(page+1)
+                    .setMaxResults(20)
+                    .getResultList();
+            return results;
+        }
+    }
 }

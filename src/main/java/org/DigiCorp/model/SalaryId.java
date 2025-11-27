@@ -1,21 +1,22 @@
 package org.DigiCorp.model;
 
-import jakarta.persistence.Id;
-
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Objects;
 
 public class SalaryId implements Serializable {
     private int empNo;
-    private String fromDate;
+    private LocalDate fromDate;
 
     public SalaryId() {
     }
 
-    public SalaryId(int empNo, String fromDate) {
+    public SalaryId(int empNo, LocalDate fromDate) {
         this.empNo = empNo;
         this.fromDate = fromDate;
     }
+
+    // getters and setters
 
     public int getEmpNo() {
         return empNo;
@@ -25,13 +26,15 @@ public class SalaryId implements Serializable {
         this.empNo = empNo;
     }
 
-    public String getFromDate() {
+    public LocalDate getFromDate() {
         return fromDate;
     }
 
-    public void setFromDate(String fromDate) {
+    public void setFromDate(LocalDate fromDate) {
         this.fromDate = fromDate;
     }
+
+    // equals and hashcode
 
     @Override
     public boolean equals(Object o) {

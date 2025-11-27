@@ -1,9 +1,11 @@
 package org.DigiCorp.dto;
 
+import java.time.LocalDate;
+
 public class SalaryDTO {
     private int salary;
-    private String fromDate;
-    private String toDate;
+    private LocalDate fromDate;
+    private LocalDate toDate;
 
     // getters/setters
     public int getSalary() {
@@ -14,19 +16,19 @@ public class SalaryDTO {
         this.salary = salary;
     }
 
-    public String getFromDate() {
+    public LocalDate getFromDate() {
         return fromDate;
     }
 
-    public void setFromDate(String fromDate) {
+    public void setFromDate(LocalDate fromDate) {
         this.fromDate = fromDate;
     }
 
-    public String getToDate() {
+    public LocalDate getToDate() {
         return toDate;
     }
 
-    public void setToDate(String toDate) {
+    public void setToDate(LocalDate toDate) {
         this.toDate = toDate;
     }
 }

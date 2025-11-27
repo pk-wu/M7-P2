@@ -14,6 +14,8 @@ public class DeptManagerId implements Serializable {
         this.deptNo = deptNo;
     }
 
+    // getters and setters
+
     public int getEmpNo() {
         return empNo;
     }
@@ -29,6 +31,8 @@ public class DeptManagerId implements Serializable {
     public void setDeptNo(String deptNo) {
         this.deptNo = deptNo;
     }
+
+    // equals and hashcode
 
     @Override
     public boolean equals(Object o) {

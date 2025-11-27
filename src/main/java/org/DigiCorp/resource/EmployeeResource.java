@@ -7,6 +7,7 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.DigiCorp.dto.EmployeeDTO;
+import org.DigiCorp.dto.EmployeeRecordDTO;
 import org.DigiCorp.model.Department;
 import org.DigiCorp.model.Employee;
 import org.DigiCorp.service.EmployeeService;
@@ -58,7 +59,8 @@ public class EmployeeResource {
 
         // (info to return: employee number, first
         //name, last name and hire date)
-        return Response.ok().build();
+        List<EmployeeRecordDTO> empRecords = employeeService.getAllEmployeeRecordsList(departmentNo, page);
+        return Response.ok().entity(empRecords).build();
     }
 
 

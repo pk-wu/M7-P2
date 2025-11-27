@@ -1,12 +1,10 @@
 package org.DigiCorp.model;
 
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 
 @Entity
@@ -17,7 +15,7 @@ public class Employee {
     private int empNo;
 
     @Column(name = "birth_date")
-    private String birthDate;
+    private LocalDate birthDate;
 
     @Column(name = "first_name")
     private String firstName;
@@ -29,13 +27,29 @@ public class Employee {
     private String gender;
 
     @Column(name = "hire_date")
-    private String hireDate;
+    private LocalDate hireDate;
+
+
+
+    // --- Mapping ---
+    @OneToMany(mappedBy="employee", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Salary> salaryList;
+
+    @OneToMany(mappedBy="employee", fetch=FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Title> titleList;
+
+    @OneToMany(mappedBy="employee", fetch=FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<DeptEmp> deptEmpList;
+
+    @OneToMany(mappedBy="employee", fetch=FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<DeptManager> deptManagerList;
+
 
     // --- Constructors ---
     public Employee() {}
 
-    public Employee(Integer empNo, String birthDate, String firstName,
-                    String lastName, String gender, String hireDate) {
+    public Employee(int empNo, LocalDate birthDate, String firstName,
+                    String lastName, String gender, LocalDate hireDate) {
         this.empNo = empNo;
         this.birthDate = birthDate;
         this.firstName = firstName;
@@ -54,11 +68,11 @@ public class Employee {
         this.empNo = empNo;
     }
 
-    public String getBirthDate() {
+    public LocalDate getBirthDate() {
         return birthDate;
     }
 
-    public void setBirthDate(String birthDate) {
+    public void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
     }
 
@@ -86,12 +100,44 @@ public class Employee {
         this.gender = gender;
     }
 
-    public String getHireDate() {
+    public LocalDate getHireDate() {
         return hireDate;
     }
 
-    public void setHireDate(String hireDate) {
+    public void setHireDate(LocalDate hireDate) {
         this.hireDate = hireDate;
+    }
+
+    public List<Salary> getSalaryList() {
+        return salaryList;
+    }
+
+    public void setSalaryList(List<Salary> salaryList) {
+        this.salaryList = salaryList;
+    }
+
+    public List<Title> getTitleList() {
+        return titleList;
+    }
+
+    public void setTitleList(List<Title> titleList) {
+        this.titleList = titleList;
+    }
+
+    public List<DeptEmp> getDeptEmpList() {
+        return deptEmpList;
+    }
+
+    public void setDeptEmpList(List<DeptEmp> deptEmpList) {
+        this.deptEmpList = deptEmpList;
+    }
+
+    public List<DeptManager> getDeptManagerList() {
+        return deptManagerList;
+    }
+
+    public void setDeptManagerList(List<DeptManager> deptManagerList) {
+        this.deptManagerList = deptManagerList;
     }
 
     @Override
@@ -103,6 +149,10 @@ public class Employee {
                 ", lastName='" + lastName + '\'' +
                 ", gender='" + gender + '\'' +
                 ", hireDate=" + hireDate +
+                ", salaryList=" + salaryList +
+                ", titleList=" + titleList +
+                ", deptEmpList=" + deptEmpList +
+                ", deptManagerList=" + deptManagerList +
                 '}';
     }
 }

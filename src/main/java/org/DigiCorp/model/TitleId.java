@@ -1,20 +1,23 @@
 package org.DigiCorp.model;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Objects;
 
 public class TitleId implements Serializable {
     private int empNo;
     private String title;
-    private String fromDate; // using String for simplicity
+    private LocalDate fromDate;
 
     public TitleId() {}
 
-    public TitleId(int empNo, String title, String fromDate) {
+    public TitleId(int empNo, String title, LocalDate fromDate) {
         this.empNo = empNo;
         this.title = title;
         this.fromDate = fromDate;
     }
+
+    // getters and setters
 
     public int getEmpNo() {
         return empNo;
@@ -32,11 +35,11 @@ public class TitleId implements Serializable {
         this.title = title;
     }
 
-    public String getFromDate() {
+    public LocalDate getFromDate() {
         return fromDate;
     }
 
-    public void setFromDate(String fromDate) {
+    public void setFromDate(LocalDate fromDate) {
         this.fromDate = fromDate;
     }
 

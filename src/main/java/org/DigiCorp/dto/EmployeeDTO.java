@@ -1,11 +1,12 @@
 package org.DigiCorp.dto;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public class EmployeeDTO {
     private int empNo;
-    private String birthDate;
-    private String hireDate;
+    private LocalDate birthDate;
+    private LocalDate hireDate;
     private String firstName;
     private String lastName;
     private String gender;
@@ -22,19 +23,19 @@ public class EmployeeDTO {
         this.empNo = empNo;
     }
 
-    public String getBirthDate() {
+    public LocalDate getBirthDate() {
         return birthDate;
     }
 
-    public void setBirthDate(String birthDate) {
+    public void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
     }
 
-    public String getHireDate() {
+    public LocalDate getHireDate() {
         return hireDate;
     }
 
-    public void setHireDate(String hireDate) {
+    public void setHireDate(LocalDate hireDate) {
         this.hireDate = hireDate;
     }
 
