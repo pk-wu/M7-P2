@@ -38,7 +38,9 @@ public class EmployeeResource {
     public Response getEmployeeRecord(@QueryParam("empNo") int empNo) {
         Employee emp = employeeService.getEmployeeRecords(empNo);
         if (emp == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("Employee record for the given employee number could not be found!")
+                    .build();
         }
         return Response.ok().entity(emp).build();
     }
@@ -53,7 +55,26 @@ public class EmployeeResource {
     public Response getAllEmployeeRecords(
             @QueryParam("departmentNo") String departmentNo,
             @QueryParam("page") @DefaultValue("1") int page) {
+//        List<EmployeeRecordDTO> empRecords = employeeService.getAllEmployeeRecordsList(departmentNo, page);
+//        return Response.ok().entity(empRecords).build();
+
+        // check if the department is indeed valid or not
+        Department department = employeeService.getDepartment(departmentNo);
+        if (department == null) {
+            return Response.status(404).entity("Department Number invalid!").build();
+        }
+        // check provided page number begins from 1
+        if (page < 1) {
+            return Response.status(400).entity("Page number should begin with 1!").build();
+        }
+
         List<EmployeeRecordDTO> empRecords = employeeService.getAllEmployeeRecordsList(departmentNo, page);
+
+        // check the page we are at has some value
+        if (empRecords.isEmpty()) {
+            return Response.status(404).entity("Page index contains no employee records!").build();
+        }
+
         return Response.ok().entity(empRecords).build();
     }
 
