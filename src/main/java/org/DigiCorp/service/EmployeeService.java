@@ -13,7 +13,7 @@ public class EmployeeService {
     // service for endpoint #1
     public List<Department> findAllDepartments() {
         try (EntityManager em = JPAUtil.getEntityManager()) {
-            TypedQuery<Department> query = em.createQuery("SELECT d FROM Department d", Department.class);
+            TypedQuery<Department> query = em.createNamedQuery("Department.findAllDepartments", Department.class);
             return query.getResultList();
         }
     }
@@ -44,11 +44,7 @@ public class EmployeeService {
     // service for endpoint #3
     public List<EmployeeRecordDTO> getAllEmployeeRecordsList(String deptNo, int page) {
         try (EntityManager em = JPAUtil.getEntityManager()) {
-            List<EmployeeRecordDTO> results = em.createQuery(
-                            "SELECT new org.DigiCorp.dto.EmployeeRecordDTO(e.empNo, e.hireDate, e.firstName, e.lastName) " +
-                                    "FROM DeptEmp de JOIN de.employee e " +
-                                    "WHERE de.deptNo = :deptNo ORDER BY e.empNo",
-                            EmployeeRecordDTO.class)
+            List<EmployeeRecordDTO> results = em.createNamedQuery("Employee.getDepartmentEmployeeRecords", EmployeeRecordDTO.class)
                     .setParameter("deptNo", deptNo)
                     .setFirstResult((page - 1) * 20)
                     .setMaxResults(20)

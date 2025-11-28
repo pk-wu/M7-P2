@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
+@NamedQuery(name="Department.findAllDepartments", query="SELECT d FROM Department d")
 @Table(name="departments")
 public class Department {
     @Id

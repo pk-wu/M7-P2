@@ -7,6 +7,10 @@ import java.util.List;
 
 
 @Entity
+@NamedQuery(name="Employee.getDepartmentEmployeeRecords",
+        query="SELECT new org.DigiCorp.dto.EmployeeRecordDTO(e.empNo, e.hireDate, e.firstName, e.lastName) " +
+                "FROM DeptEmp de JOIN de.employee e " +
+                "WHERE de.deptNo = :deptNo ORDER BY e.empNo")
 @Table(name = "employees")
 public class Employee {
     @Id
