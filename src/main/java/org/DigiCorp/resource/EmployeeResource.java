@@ -7,6 +7,7 @@ import org.DigiCorp.dto.EmployeeRecordDTO;
 import org.DigiCorp.model.Department;
 import org.DigiCorp.model.Employee;
 import org.DigiCorp.service.EmployeeService;
+
 import java.util.List;
 
 
@@ -33,7 +34,7 @@ public class EmployeeResource {
     // endpoint #2
     // usage: http://localhost:8090/M7_P2_war_exploded/api/employees/getEmployeeRecord/?empNo=99999
     @GET
-    @Path("/getEmployeeRecord/")
+    @Path("/getEmployeeRecord")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getEmployeeRecord(@QueryParam("empNo") int empNo) {
         Employee emp = employeeService.getEmployeeRecords(empNo);
@@ -50,14 +51,11 @@ public class EmployeeResource {
     // (1) http://localhost:8090/M7_P2_war_exploded/api/employees/getAllEmployeeRecords/?departmentNo=d003
     // (2) http://localhost:8090/M7_P2_war_exploded/api/employees/getAllEmployeeRecords/?departmentNo=d003&page=10
     @GET
-    @Path("/getAllEmployeeRecords/")
+    @Path("/getAllEmployeeRecords")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllEmployeeRecords(
             @QueryParam("departmentNo") String departmentNo,
             @QueryParam("page") @DefaultValue("1") int page) {
-//        List<EmployeeRecordDTO> empRecords = employeeService.getAllEmployeeRecordsList(departmentNo, page);
-//        return Response.ok().entity(empRecords).build();
-
         // check if the department is indeed valid or not
         Department department = employeeService.getDepartment(departmentNo);
         if (department == null) {
@@ -68,6 +66,7 @@ public class EmployeeResource {
             return Response.status(400).entity("Page number should begin with 1!").build();
         }
 
+        // retrieve the list of employee records
         List<EmployeeRecordDTO> empRecords = employeeService.getAllEmployeeRecordsList(departmentNo, page);
 
         // check the page we are at has some value
