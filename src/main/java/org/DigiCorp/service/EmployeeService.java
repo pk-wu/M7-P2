@@ -25,6 +25,13 @@ public class EmployeeService {
             return emp;
         }
     }
+    // endpoint #2 helper: check department validity
+    public Department getDepartment(String deptNo) {
+        try (EntityManager em = JPAUtil.getEntityManager()) {
+            Department dept = em.find(Department.class, deptNo);
+            return dept;
+        }
+    }
 
     // service for endpoint #3
     public List<EmployeeRecordDTO> getAllEmployeeRecordsList(String deptNo, int page) {
