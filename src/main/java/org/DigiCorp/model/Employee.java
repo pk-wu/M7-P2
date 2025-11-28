@@ -34,15 +34,12 @@ public class Employee {
 
     // --- Mapping ---
     @OneToMany(mappedBy = "employee", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JsonManagedReference
     private List<Salary> salaryList;
 
     @OneToMany(mappedBy = "employee", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JsonManagedReference
     private List<Title> titleList;
 
     @OneToMany(mappedBy = "employee", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JsonManagedReference
     private List<DeptEmp> deptEmpList;
 
     @OneToMany(mappedBy = "employee", fetch = FetchType.EAGER, cascade = CascadeType.ALL)

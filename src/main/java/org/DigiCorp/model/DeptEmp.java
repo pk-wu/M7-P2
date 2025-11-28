@@ -29,12 +29,12 @@ public class DeptEmp {
     // mapping
     @ManyToOne
     @JoinColumn(name = "emp_no", referencedColumnName = "emp_no")
-    @JsonBackReference
+    @JsonIgnore
     private Employee employee;
 
     @ManyToOne
     @JoinColumn(name = "dept_no", referencedColumnName = "dept_no")
-    @JsonBackReference
+    @JsonIgnore
     private Department department;
 
 
