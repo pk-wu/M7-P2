@@ -39,7 +39,7 @@ public class EmployeeResource {
     public Response getEmployeeRecord(@QueryParam("empNo") int empNo) {
         Employee emp = employeeService.getEmployeeRecords(empNo);
         if (emp == null) {
-            return Response.status(Response.Status.NOT_FOUND)
+            return Response.ok()
                     .entity("Employee record for the given employee number could not be found!")
                     .build();
         }
@@ -71,7 +71,7 @@ public class EmployeeResource {
 
         // check the page we are at has some value
         if (empRecords.isEmpty()) {
-            return Response.status(404).entity("Page index contains no employee records!").build();
+            return Response.ok().entity("Page index contains no employee records!").build();
         }
 
         return Response.ok().entity(empRecords).build();
