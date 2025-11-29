@@ -61,16 +61,16 @@ public class Title {
         this.title = title;
     }
 
-    public String getFromDate() {
-        return fromDate.toString();
+    public LocalDate getFromDate() {
+        return fromDate;
     }
 
     public void setFromDate(LocalDate fromDate) {
         this.fromDate = fromDate;
     }
 
-    public String getToDate() {
-        return toDate.toString();
+    public LocalDate getToDate() {
+        return toDate;
     }
 
     public void setToDate(LocalDate toDate) {

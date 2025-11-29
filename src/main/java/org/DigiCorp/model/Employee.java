@@ -70,8 +70,8 @@ public class Employee {
         this.empNo = empNo;
     }
 
-    public String getBirthDate() {
-        return birthDate.toString();
+    public LocalDate getBirthDate() {
+        return birthDate;
     }
 
     public void setBirthDate(LocalDate birthDate) {
@@ -102,8 +102,8 @@ public class Employee {
         this.gender = gender;
     }
 
-    public String getHireDate() {
-        return hireDate.toString();
+    public LocalDate getHireDate() {
+        return hireDate;
     }
 
     public void setHireDate(LocalDate hireDate) {
