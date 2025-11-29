@@ -30,7 +30,7 @@ public class EmployeeService {
 
     /**
      * Service for endpoint #2:
-     * method loads Employee entity & forces initialization, then returns it
+     * method loads Employee entity and forces initialization, then returns it
      *
      * @param empNo The primary key of the Employee entity
      * @return The Employee retrieved corresponding to the supplied primary key

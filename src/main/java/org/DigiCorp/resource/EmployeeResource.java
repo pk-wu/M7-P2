@@ -45,7 +45,7 @@ public class EmployeeResource {
 
     /**
      * Endpoint #2: Get specific Employee record
-     * Retrieves full employee record & related details i.e. salaries, titles, departments
+     * Retrieves full employee record and related details i.e. salaries, titles, departments
      * Usage (GET): http://localhost:8090/M7_P2_war_exploded/api/employees/getEmployeeRecord/?empNo=99999
      *
      * @param empNo Employee number to be retrieved, taken in as a Query Parameter

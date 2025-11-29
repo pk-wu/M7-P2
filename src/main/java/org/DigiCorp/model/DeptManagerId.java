@@ -21,11 +21,13 @@ public class DeptManagerId implements Serializable {
     /**
      * default public constructor as required by JPA/Hibernate
      */
-    public DeptManagerId() {}
+    public DeptManagerId() {
+    }
 
     /**
      * parameterized constructor to create new DeptManagerId instance
-     * @param empNo employee unique ID int
+     *
+     * @param empNo  employee unique ID int
      * @param deptNo department unique ID string
      */
     public DeptManagerId(int empNo, String deptNo) {
@@ -37,6 +39,7 @@ public class DeptManagerId implements Serializable {
 
     /**
      * retrieves employee number
+     *
      * @return the employee number
      */
     public int getEmpNo() {
@@ -45,6 +48,7 @@ public class DeptManagerId implements Serializable {
 
     /**
      * sets employee number
+     *
      * @param empNo the new employee number
      */
     public void setEmpNo(int empNo) {
@@ -53,6 +57,7 @@ public class DeptManagerId implements Serializable {
 
     /**
      * retrieves department number
+     *
      * @return the department number
      */
     public String getDeptNo() {
@@ -72,6 +77,7 @@ public class DeptManagerId implements Serializable {
 
     /**
      * compares object for equality
+     *
      * @param o object to be compared for equality
      * @return boolean true if objects equal or false otherwise
      */
@@ -84,6 +90,7 @@ public class DeptManagerId implements Serializable {
 
     /**
      * returns hash code value for object
+     *
      * @return hash code value for this object
      */
     @Override

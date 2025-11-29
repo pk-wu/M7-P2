@@ -11,7 +11,7 @@ import java.time.LocalDate;
  * it has a many-to-one mapping to employee entity and dept_no entity
  */
 @Entity
-@Table(name="dept_emp")
+@Table(name = "dept_emp")
 // uses DeptEmpId class to represent composite primary key
 @IdClass(DeptEmpId.class)
 public class DeptEmp {
@@ -20,7 +20,7 @@ public class DeptEmp {
      * employee number primary composite key, with JsonIgnore preventing serialization
      */
     @Id
-    @Column(name="emp_no")
+    @Column(name = "emp_no")
     @JsonIgnore
     private int empNo;
 
@@ -28,20 +28,20 @@ public class DeptEmp {
      * department number primary composite key
      */
     @Id
-    @Column(name="dept_no")
+    @Column(name = "dept_no")
     private String deptNo;
 
     /**
      * fromDate indicates the first date of working in a given department
      */
-    @Column(name="from_date")
+    @Column(name = "from_date")
     private LocalDate fromDate;
 
     /**
      * toDate indicates the last date of working in a given department.
      * usually has placeholder value '9999-01-01' to indicate current assignment
      */
-    @Column(name="to_date")
+    @Column(name = "to_date")
     private LocalDate toDate;
 
     // mapping
@@ -71,15 +71,16 @@ public class DeptEmp {
     /**
      * default public construct as required by JPA/Hibernate
      */
-    public DeptEmp() {}
+    public DeptEmp() {
+    }
 
     /**
      * Parameterized constructor to create DeptEmp instance
      *
-     * @param empNo employee unique ID int
-     * @param deptNo department unique ID String
+     * @param empNo    employee unique ID int
+     * @param deptNo   department unique ID String
      * @param fromDate first date working in department
-     * @param toDate last date working in department
+     * @param toDate   last date working in department
      */
     public DeptEmp(int empNo, String deptNo, LocalDate fromDate, LocalDate toDate) {
         this.empNo = empNo;
@@ -92,6 +93,7 @@ public class DeptEmp {
 
     /**
      * retrieves employee number
+     *
      * @return employee number
      */
     public int getEmpNo() {
@@ -100,6 +102,7 @@ public class DeptEmp {
 
     /**
      * sets the employee number
+     *
      * @param empNo the new employee number
      */
     public void setEmpNo(int empNo) {
@@ -108,6 +111,7 @@ public class DeptEmp {
 
     /**
      * retrieves the department number
+     *
      * @return the department number
      */
     public String getDeptNo() {
@@ -116,6 +120,7 @@ public class DeptEmp {
 
     /**
      * sets the department number
+     *
      * @param deptNo the new department number
      */
     public void setDeptNo(String deptNo) {
@@ -124,6 +129,7 @@ public class DeptEmp {
 
     /**
      * retrieves the starting date, fromDate
+     *
      * @return the start date, fromDate
      */
     public LocalDate getFromDate() {
@@ -132,6 +138,7 @@ public class DeptEmp {
 
     /**
      * sets the starting date, fromDate
+     *
      * @param fromDate the new starting date, fromDate
      */
     public void setFromDate(LocalDate fromDate) {
@@ -140,6 +147,7 @@ public class DeptEmp {
 
     /**
      * retrieves the ending date, toDate
+     *
      * @return the ending date, toDate
      */
     public LocalDate getToDate() {
@@ -148,6 +156,7 @@ public class DeptEmp {
 
     /**
      * sets the ending date, toDate
+     *
      * @param toDate the new ending date, toDate
      */
     public void setToDate(LocalDate toDate) {
@@ -156,6 +165,7 @@ public class DeptEmp {
 
     /**
      * retrieves the employee associated in the mapping
+     *
      * @return associated Employee object
      */
     public Employee getEmployee() {
@@ -164,6 +174,7 @@ public class DeptEmp {
 
     /**
      * sets the employee associated in the mapping
+     *
      * @param employee the new Employee object
      */
     public void setEmployee(Employee employee) {
@@ -172,6 +183,7 @@ public class DeptEmp {
 
     /**
      * retrieves the department associated in the mapping
+     *
      * @return associated Department object
      */
     public Department getDepartment() {
@@ -180,6 +192,7 @@ public class DeptEmp {
 
     /**
      * sets the department associated in the mapping
+     *
      * @param department the new Department object
      */
     public void setDepartment(Department department) {
@@ -188,6 +201,7 @@ public class DeptEmp {
 
     /**
      * provide string representation of DeptEmp
+     *
      * @return String formatted DeptEmp with its attributes
      */
     @Override

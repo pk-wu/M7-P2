@@ -6,7 +6,7 @@ import java.util.Objects;
 /**
  * Composite Primary Key for DeptEmp entity, combining the
  * employee number and department number
- *
+ * <p>
  * Serializable is implemented as required for @IdClass usage
  */
 public class DeptEmpId implements Serializable {
@@ -22,11 +22,13 @@ public class DeptEmpId implements Serializable {
     /**
      * default public constructor as required by JPA/Hibernate
      */
-    public DeptEmpId() {}
+    public DeptEmpId() {
+    }
 
     /**
      * parameterized constructor for explicit key creation
-     * @param empNo the employee's id number
+     *
+     * @param empNo  the employee's id number
      * @param deptNo the department's id string
      */
     public DeptEmpId(int empNo, String deptNo) {
@@ -38,6 +40,7 @@ public class DeptEmpId implements Serializable {
 
     /**
      * retrieves the employee number
+     *
      * @return the employee number
      */
     public int getEmpNo() {
@@ -46,6 +49,7 @@ public class DeptEmpId implements Serializable {
 
     /**
      * sets the employee number
+     *
      * @param empNo the new employee number
      */
     public void setEmpNo(int empNo) {
@@ -54,6 +58,7 @@ public class DeptEmpId implements Serializable {
 
     /**
      * retrieves the department number
+     *
      * @return the department number
      */
     public String getDeptNo() {
@@ -62,6 +67,7 @@ public class DeptEmpId implements Serializable {
 
     /**
      * sets the department number
+     *
      * @param deptNo the new department number
      */
     public void setDeptNo(String deptNo) {
@@ -72,6 +78,7 @@ public class DeptEmpId implements Serializable {
 
     /**
      * Compares the object for equality
+     *
      * @param o object to be compared for equality
      * @return boolean result of equals check
      */
@@ -84,6 +91,7 @@ public class DeptEmpId implements Serializable {
 
     /**
      * returns hash code value for object
+     *
      * @return hash code value for this object
      */
     @Override

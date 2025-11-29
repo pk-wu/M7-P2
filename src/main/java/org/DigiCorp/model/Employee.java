@@ -95,12 +95,13 @@ public class Employee {
 
     /**
      * parameterized constructor for creation of Employee instance
-     * @param empNo employee unique ID int
+     *
+     * @param empNo     employee unique ID int
      * @param birthDate employee's date of birth
      * @param firstName employee's first name
-     * @param lastName employee's last name
-     * @param gender employee's gender
-     * @param hireDate employee's hiring date
+     * @param lastName  employee's last name
+     * @param gender    employee's gender
+     * @param hireDate  employee's hiring date
      */
     public Employee(int empNo, LocalDate birthDate, String firstName,
                     String lastName, String gender, LocalDate hireDate) {
@@ -116,6 +117,7 @@ public class Employee {
 
     /**
      * retrieves employee number
+     *
      * @return the employee number
      */
     public int getEmpNo() {
@@ -124,6 +126,7 @@ public class Employee {
 
     /**
      * sets the employee number
+     *
      * @param empNo the new employee number
      */
     public void setEmpNo(int empNo) {
@@ -132,6 +135,7 @@ public class Employee {
 
     /**
      * retrieves the employee's date of birth
+     *
      * @return the employee's date of birth
      */
     public LocalDate getBirthDate() {
@@ -140,6 +144,7 @@ public class Employee {
 
     /**
      * sets the employee's date of birth
+     *
      * @param birthDate the employee's new date of birth
      */
     public void setBirthDate(LocalDate birthDate) {
@@ -148,6 +153,7 @@ public class Employee {
 
     /**
      * retrieves the employee's first name
+     *
      * @return the employee's first name
      */
     public String getFirstName() {
@@ -156,6 +162,7 @@ public class Employee {
 
     /**
      * sets the employee's first name
+     *
      * @param firstName the employee's new first name
      */
     public void setFirstName(String firstName) {
@@ -164,6 +171,7 @@ public class Employee {
 
     /**
      * retrieves the employee's last name
+     *
      * @return the employee's last name
      */
     public String getLastName() {
@@ -172,6 +180,7 @@ public class Employee {
 
     /**
      * sets the employee's last name
+     *
      * @param lastName the employee's new last name
      */
     public void setLastName(String lastName) {
@@ -180,6 +189,7 @@ public class Employee {
 
     /**
      * retrieves the employee's gender
+     *
      * @return the employee's gender
      */
     public String getGender() {
@@ -188,6 +198,7 @@ public class Employee {
 
     /**
      * sets the employee's gender
+     *
      * @param gender The employee's new gender
      */
     public void setGender(String gender) {
@@ -196,6 +207,7 @@ public class Employee {
 
     /**
      * retrieves the employee's hire date
+     *
      * @return the employee's hire date
      */
     public LocalDate getHireDate() {
@@ -204,6 +216,7 @@ public class Employee {
 
     /**
      * sets the employee's hire date
+     *
      * @param hireDate the employee's new hire date
      */
     public void setHireDate(LocalDate hireDate) {
@@ -212,6 +225,7 @@ public class Employee {
 
     /**
      * retrieves list of historical salary records
+     *
      * @return list of historical salary records
      */
     public List<Salary> getSalaryList() {
@@ -220,6 +234,7 @@ public class Employee {
 
     /**
      * sets the list of historical salary records
+     *
      * @param salaryList the new list of historical salary records
      */
     public void setSalaryList(List<Salary> salaryList) {
@@ -228,6 +243,7 @@ public class Employee {
 
     /**
      * retrieves the list of historical title records
+     *
      * @return list of historical title records
      */
     public List<Title> getTitleList() {
@@ -236,6 +252,7 @@ public class Employee {
 
     /**
      * sets the list of historical title records
+     *
      * @param titleList new list of historical title records
      */
     public void setTitleList(List<Title> titleList) {
@@ -244,6 +261,7 @@ public class Employee {
 
     /**
      * retrieves the list of historical department assignments
+     *
      * @return list of historical department assignments
      */
     public List<DeptEmp> getDeptEmpList() {
@@ -252,6 +270,7 @@ public class Employee {
 
     /**
      * sets the list of historical department assignments
+     *
      * @param deptEmpList the new list of historical department assignments
      */
     public void setDeptEmpList(List<DeptEmp> deptEmpList) {
@@ -260,6 +279,7 @@ public class Employee {
 
     /**
      * retrieves the list of historical department manager assignments
+     *
      * @return list of historical department manager assignments
      */
     public List<DeptManager> getDeptManagerList() {
@@ -268,6 +288,7 @@ public class Employee {
 
     /**
      * sets the list of historical department manager assignments
+     *
      * @param deptManagerList the new list of historical department manager assignments
      */
     public void setDeptManagerList(List<DeptManager> deptManagerList) {
@@ -276,6 +297,7 @@ public class Employee {
 
     /**
      * provides string representation of Employee object
+     *
      * @return formatted String of Employee and its attributes
      */
     @Override
