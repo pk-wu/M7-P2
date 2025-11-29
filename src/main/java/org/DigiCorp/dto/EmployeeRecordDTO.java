@@ -4,11 +4,9 @@ package org.DigiCorp.dto;
 import java.time.LocalDate;
 
 /**
- *
  * Employee Record DTO (Data Transfer Object) used specifically for
  * transferring a streamlined set of employee data from the server back to the client,
  * avoiding the transfer of unnecessary data.
- *
  */
 public class EmployeeRecordDTO {
     /**
@@ -29,6 +27,7 @@ public class EmployeeRecordDTO {
     private String lastName;
 
     // constructors
+
     /**
      * Default public constructor as required by JPA/Hibernate
      */
@@ -38,10 +37,10 @@ public class EmployeeRecordDTO {
     /**
      * Parameterized constructor to initialize a DTO instance
      *
-     * @param empNo employee's unique ID number
-     * @param hireDate date employee was hired
+     * @param empNo     employee's unique ID number
+     * @param hireDate  date employee was hired
      * @param firstName employee's first name
-     * @param lastName employee's last name
+     * @param lastName  employee's last name
      */
     public EmployeeRecordDTO(int empNo, LocalDate hireDate, String firstName, String lastName) {
         this.empNo = empNo;
@@ -51,6 +50,7 @@ public class EmployeeRecordDTO {
     }
 
     // getters/setters
+
     /**
      * Retrieves the employee's unique ID number.
      *
@@ -69,6 +69,11 @@ public class EmployeeRecordDTO {
         this.empNo = empNo;
     }
 
+    /**
+     * Retrieves the employee's hire date
+     *
+     * @return The hire date of the employee
+     */
     public LocalDate getHireDate() {
         return hireDate;
     }
