@@ -35,21 +35,14 @@ public class EmployeeDAO {
     /**
      * Service for endpoint #2:
      * method loads Employee entity and forces initialization, then returns it.
-     * If employee does not exist, throws InvalidDataException
      *
      * @param empNo the primary key of the Employee entity
      * @return the Employee retrieved corresponding to the supplied key
-     * @throws InvalidDataException if Employee not found
      */
-    public Employee getEmployeeRecords(int empNo) throws EmptyResultException {
+    public Employee getEmployeeRecords(int empNo){
         try (EntityManager em = JPAUtil.getEntityManager()) {
             // find employee via primary key
             Employee emp = em.find(Employee.class, empNo);
-            // CHECK: if employee not found, throw EmptyResultException
-            if (emp == null) {
-                throw new EmptyResultException("Employee (emp no. " + empNo + ") was not found");
-            }
-            // if employee exists we just return
             return emp;
         }
     }
@@ -64,19 +57,14 @@ public class EmployeeDAO {
      * @param page   requested page number for filtering
      * @return paginated List of EmployeeRecordDTO objects, capped at 20 objects
      * @throws InvalidDataException Exception thrown when input data invalid
-     * @throws EmptyResultException Exception thrown if page contains no employee
      */
-    public List<EmployeeRecordDTO> getAllEmployeeRecordsList(String deptNo, int page) throws InvalidDataException, EmptyResultException {
+    public List<EmployeeRecordDTO> getAllEmployeeRecordsList(String deptNo, int page) throws InvalidDataException {
 
         try (EntityManager em = JPAUtil.getEntityManager()) {
-            // CHECK #1: if department doesn't exist, throw InvalidDataException
+            // CHECK: if department doesn't exist, throw InvalidDataException
             Department dept = em.find(Department.class, deptNo);
             if (dept == null) {
                 throw new InvalidDataException("Department " + deptNo + " does not exist.");
-            }
-            // CHECK #2: if page <1, throw InvalidDataException
-            if (page < 1) {
-                throw new InvalidDataException("Page number must be greater than or equal to 1!");
             }
 
             // execute named query to retrieve List of EmployeeDTO records
@@ -86,10 +74,6 @@ public class EmployeeDAO {
                     .setFirstResult((page - 1) * 20)
                     .setMaxResults(20)
                     .getResultList();
-            // CHECK #3: if empty results, throw EmptyResultException
-            if (results.isEmpty()) {
-                throw new EmptyResultException("Page index contains no employee records!");
-            }
             return results;
         }
     }

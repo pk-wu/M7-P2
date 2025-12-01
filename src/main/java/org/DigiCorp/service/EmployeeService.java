@@ -50,7 +50,7 @@ public class EmployeeService {
     /**
      * Endpoint #2: Get specific Employee record
      * Retrieves full employee record and related details i.e. salaries, titles, departments.
-     * If employee cannot be found, InvalidDataException is caught and error message is printed
+     * If employee cannot be found, error message is printed
      * Usage (GET): http://localhost:8090/M7_P2_war_exploded/api/employees/getEmployeeRecord/?empNo=99999
      *
      * @param empNo Employee number to be retrieved, taken in as a Query Parameter
@@ -60,17 +60,18 @@ public class EmployeeService {
     @Path("/getEmployeeRecord")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getEmployeeRecord(@QueryParam("empNo") int empNo) {
-        try {
-            // Retrieve employee record
-            Employee emp = employeeDAO.getEmployeeRecords(empNo);
-            // return the requested Employee if all ok
-            return Response.ok().entity(emp).build();
-        } catch (EmptyResultException e) {
+        // Retrieve employee record
+        Employee emp = employeeDAO.getEmployeeRecords(empNo);
+        if (emp == null) {
             // if employee not found, catch exception and give Response
             return Response.ok()
-                    .entity(e.getMessage())
+                    .entity("Requested Employee Record not found")
                     .build();
         }
+
+        // return the requested Employee if all ok
+        return Response.ok().entity(emp).build();
+
     }
 
     /**
@@ -80,7 +81,7 @@ public class EmployeeService {
      * limited to 20 entries.
      * If department does not exist, page number invalid, or current page index has no employees,
      * exceptions are caught and handled.
-     *
+     * <p>
      * Usages (GET): (1) defaulted to page 1 (2) specifying page number
      * (1) http://localhost:8090/M7_P2_war_exploded/api/employees/getAllEmployeeRecords/?departmentNo=d003
      * (2) http://localhost:8090/M7_P2_war_exploded/api/employees/getAllEmployeeRecords/?departmentNo=d003&page=10
@@ -95,18 +96,24 @@ public class EmployeeService {
     public Response getAllEmployeeRecords(
             @QueryParam("departmentNo") String departmentNo,
             @QueryParam("page") @DefaultValue("1") int page) {
+        // CHECK: page number has to be greater than or equal to 1
+        if (page < 1) {
+            return Response.status(400)
+                    .entity("Page number must be greater than or equal to 1!")
+                    .build();
+        }
         try {
             // retrieve the list of employee records
             List<EmployeeRecordDTO> empRecords = employeeDAO.getAllEmployeeRecordsList(departmentNo, page);
+            // CHECK: retrieved page is empty we return appropriate message
+            if (empRecords.isEmpty()) {
+                return Response.ok()
+                        .entity("Page index contains no employee records!").build();
+            }
             return Response.ok().entity(empRecords).build();
         } catch (InvalidDataException e) {
-            // if page number below 1 or department does not exist, exception is caught
+            // if department does not exist, exception is caught
             return Response.status(400)
-                    .entity(e.getMessage())
-                    .build();
-        } catch (EmptyResultException e) {
-            // if page index specified contains no records, exception is caught
-            return Response.ok()
                     .entity(e.getMessage())
                     .build();
         }
