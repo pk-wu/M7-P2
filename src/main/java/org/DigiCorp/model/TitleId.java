@@ -6,14 +6,15 @@ import java.util.Objects;
 
 /**
  * class serves as composite primary key for Title entity,
- * composed of employee number, job title, starting date of title.
- * implements Serializable as required for @IdClass implemenation
+ * composed of Employee object, job title, starting date of title.
+ * implements Serializable as required for @IdClass implementation
  */
 public class TitleId implements Serializable {
+
     /**
-     * employee number, part of primary composite key
+     * Employee object, part of composite primary key
      */
-    private int empNo;
+    private Employee employee;
 
     /**
      * job title, part of primary composite key
@@ -34,12 +35,12 @@ public class TitleId implements Serializable {
     /**
      * parameterized constructor for creating new TitleId instance
      *
-     * @param empNo    employee unique ID int
+     * @param employee Employee object
      * @param title    job title
      * @param fromDate starting date of the job title
      */
-    public TitleId(int empNo, String title, LocalDate fromDate) {
-        this.empNo = empNo;
+    public TitleId(Employee employee, String title, LocalDate fromDate) {
+        this.employee = employee;
         this.title = title;
         this.fromDate = fromDate;
     }
@@ -47,21 +48,21 @@ public class TitleId implements Serializable {
     // getters and setters
 
     /**
-     * retrieve the employee number
+     * retrieve the Employee object
      *
-     * @return the employee number
+     * @return the Employee object
      */
-    public int getEmpNo() {
-        return empNo;
+    public Employee getEmployee() {
+        return employee;
     }
 
     /**
-     * sets the employee number
+     * sets the Employee object
      *
-     * @param empNo the new employee number
+     * @param employee the new Employee object
      */
-    public void setEmpNo(int empNo) {
-        this.empNo = empNo;
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
     }
 
     /**
@@ -108,9 +109,10 @@ public class TitleId implements Serializable {
      */
     @Override
     public boolean equals(Object o) {
-        // equality checking logic
         if (!(o instanceof TitleId titleId)) return false;
-        return empNo == titleId.empNo && Objects.equals(title, titleId.title) && Objects.equals(fromDate, titleId.fromDate);
+        return Objects.equals(employee, titleId.employee)
+                && Objects.equals(title, titleId.title)
+                && Objects.equals(fromDate, titleId.fromDate);
     }
 
     /**
@@ -120,6 +122,6 @@ public class TitleId implements Serializable {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(empNo, title, fromDate);
+        return Objects.hash(employee, title, fromDate);
     }
 }
