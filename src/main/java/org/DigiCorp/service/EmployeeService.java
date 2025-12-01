@@ -85,4 +85,88 @@ public class EmployeeService {
             return results;
         }
     }
+    // service for endpoint #4
+    public void promoteEmployee(EmployeePromotionRequest request) {
+        LocalDate today = LocalDate.now();
+
+        try (EntityManager em = JPAUtil.getEntityManager()) {
+            EntityTransaction tx = em.getTransaction();
+            tx.begin();
+
+            Employee emp = em.find(Employee.class, request.getEmpNo());
+            if (emp == null) {
+                tx.rollback();
+                throw new IllegalArgumentException("Employee not found");
+            }
+
+            // force initialization of collections to avoid LazyInitializationException
+            emp.getSalaryList().size();
+            emp.getTitleList().size();
+            emp.getDeptEmpList().size();
+            emp.getDeptManagerList().size();
+
+            // Get current title and salary
+            List<Title> titles = emp.getTitleList();
+            Title currentTitle = titles.isEmpty() ? null : titles.get(titles.size() - 1);
+
+            List<Salary> salaries = emp.getSalaryList();
+            Salary currentSalary = salaries.isEmpty() ? null : salaries.get(salaries.size() - 1);
+
+            String oldTitle = (currentTitle != null) ? currentTitle.getTitle() : "";
+            int oldSalary = (currentSalary != null) ? currentSalary.getSalary() : 0;
+            String newTitle = request.getNewTitle();
+            int newSalary = request.getNewSalary();
+
+            // --- Validation logic ---
+            if (newSalary <= 0) {
+                tx.rollback();
+                throw new IllegalArgumentException("0 or negative salary not allowed");
+            }
+
+            if (oldTitle.equals(newTitle)) {
+                if (newSalary < oldSalary) {
+                    tx.rollback();
+                    throw new IllegalArgumentException("Salary Decrement Not Allowed");
+                }
+            } else { // title is different
+                if (newSalary < oldSalary) {
+                    tx.rollback();
+                    throw new IllegalArgumentException("Salary Decrement Not Allowed");
+                }
+            }
+
+            // --- Close current title ---
+            if (currentTitle != null) {
+                currentTitle.setToDate(today.minusDays(1));
+                em.merge(currentTitle);
+            }
+
+            // --- Insert new title ---
+            Title newTitleEntity = new Title();
+            newTitleEntity.setEmployee(emp); // Employee object, matches @IdClass mapping
+            newTitleEntity.setTitle(newTitle);
+            newTitleEntity.setFromDate(today);
+            newTitleEntity.setToDate(LocalDate.of(9999, 12, 31));
+            //em.persist(newTitleEntity);
+            em.merge(newTitleEntity);
+
+            // --- Close current salary & insert new one ---
+            if (newSalary > 0) {
+                if (currentSalary != null) {
+                    currentSalary.setToDate(today.minusDays(1));
+                    em.merge(currentSalary);
+                }
+
+                Salary newSalaryEntity = new Salary();
+                newSalaryEntity.setEmployee(emp); // Employee object, matches @IdClass mapping
+                newSalaryEntity.setSalary(newSalary);
+                newSalaryEntity.setFromDate(today);
+                newSalaryEntity.setToDate(LocalDate.of(9999, 12, 31));
+                em.persist(newSalaryEntity);
+            }
+
+            tx.commit();
+        }
+    }
+
 }
