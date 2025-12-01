@@ -1,6 +1,5 @@
 package org.DigiCorp.model;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
@@ -17,12 +16,14 @@ import java.time.LocalDate;
 public class Salary {
 
     /**
-     * employee number, part of composite primary key
+     * maps many-to-one relationship to Employee entity and serves as part of composite primary key.
+     * JsonIgnore prevents JSON serialization
      */
     @Id
-    @Column(name = "emp_no")
+    @ManyToOne
+    @JoinColumn(name = "emp_no", referencedColumnName = "emp_no")
     @JsonIgnore
-    private int empNo;
+    private Employee employee;
 
     /**
      * start date of specified salary record, part of composite primary key
@@ -44,17 +45,6 @@ public class Salary {
     @Column(name = "salary")
     private int salary;
 
-
-    // mapping
-    /**
-     * maps many-to-one relationship to Employee entity.
-     * JsonIgnore prevents JSON serialization
-     */
-    @ManyToOne
-    @JoinColumn(name = "emp_no", referencedColumnName = "emp_no")
-    @JsonIgnore
-    private Employee employee;
-
     /**
      * default public constructor as required by JPA/Hibernate
      */
@@ -64,13 +54,13 @@ public class Salary {
     /**
      * parameterized constructor to create a Salary instance
      *
-     * @param empNo    employee unique ID int
+     * @param employee Employee entity
      * @param fromDate start date of salary record
      * @param toDate   end date of salary record
      * @param salary   integer value of annual salary record
      */
-    public Salary(int empNo, LocalDate fromDate, LocalDate toDate, int salary) {
-        this.empNo = empNo;
+    public Salary(Employee employee, LocalDate fromDate, LocalDate toDate, int salary) {
+        this.employee = employee;
         this.fromDate = fromDate;
         this.toDate = toDate;
         this.salary = salary;
@@ -79,21 +69,21 @@ public class Salary {
     // getters and setters
 
     /**
-     * retrieves employee number
+     * retrieves the Employee entity associated with the salary record
      *
-     * @return the employee number
+     * @return the associated Employee object
      */
-    public int getEmpNo() {
-        return empNo;
+    public Employee getEmployee() {
+        return employee;
     }
 
     /**
-     * sets the employee number
+     * sets the Employee entity associated with the salary record
      *
-     * @param empNo the new employee number
+     * @param employee the new associated Employee object
      */
-    public void setEmpNo(int empNo) {
-        this.empNo = empNo;
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
     }
 
     /**
@@ -151,24 +141,6 @@ public class Salary {
     }
 
     /**
-     * retrieves the Employee entity associated with the salary record
-     *
-     * @return the associated Employee object
-     */
-    public Employee getEmployee() {
-        return employee;
-    }
-
-    /**
-     * sets the Employee entity associated with the salary record
-     *
-     * @param employee the new associated Employee object
-     */
-    public void setEmployee(Employee employee) {
-        this.employee = employee;
-    }
-
-    /**
      * Provides string representation of Salary object
      *
      * @return formatted string with the salary attributes
@@ -176,11 +148,10 @@ public class Salary {
     @Override
     public String toString() {
         return "Salary{" +
-                "empNo=" + empNo +
+                "employee=" + employee +
                 ", fromDate=" + fromDate +
                 ", toDate=" + toDate +
                 ", salary=" + salary +
-                ", employee=" + employee +
                 '}';
     }
 }
