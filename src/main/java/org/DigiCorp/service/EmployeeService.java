@@ -1,171 +1,141 @@
 package org.DigiCorp.service;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.TypedQuery;
-import org.DigiCorp.dto.*;
-import org.DigiCorp.model.*;
-import org.DigiCorp.util.JPAUtil;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import org.DigiCorp.dto.EmployeePromotionRequest;
+import org.DigiCorp.dto.EmployeeRecordDTO;
+import org.DigiCorp.exceptions.EmptyResultException;
+import org.DigiCorp.exceptions.InvalidDataException;
+import org.DigiCorp.model.Department;
+import org.DigiCorp.model.Employee;
+import org.DigiCorp.dao.EmployeeDAO;
 
 import java.util.List;
 
 /**
- * class provides business logic, middleman between the resource class
- * and the database (manages transactions, executes queries)
+ * EmployeeResource class provides the REST endpoints as per /api/employees/
  */
+@Path("/employees")
 public class EmployeeService {
 
     /**
-     * Service for endpoint #1:
-     * executes a named query to retrieve a list of Departments
-     *
-     * @return List of Department entities
+     * enables us to access business logic in EmployeeService
      */
-    public List<Department> findAllDepartments() {
-        try (EntityManager em = JPAUtil.getEntityManager()) {
-            // retrieves all departments using the named query
-            TypedQuery<Department> query = em.createNamedQuery("Department.findAllDepartments", Department.class);
-            return query.getResultList();
+    private final EmployeeDAO employeeDAO;
+
+    /**
+     * default constructor, initializes the employee service object for use
+     */
+    public EmployeeService() {
+        this.employeeDAO = new EmployeeDAO();
+    }
+
+    /**
+     * Endpoint #1: Get all departments
+     * Retrieves list of all Department records
+     * Usage (GET): http://localhost:8090/M7_P2_war_exploded/api/employees/getAllDepartments
+     *
+     * @return response containing JSON of list of Department objects
+     */
+    @GET
+    @Path("/getAllDepartments")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAllDepartments() {
+        // call service to retrieve a list of all departments
+        List<Department> list = employeeDAO.findAllDepartments();
+        return Response.ok().entity(list).build();
+    }
+
+    /**
+     * Endpoint #2: Get specific Employee record
+     * Retrieves full employee record and related details i.e. salaries, titles, departments.
+     * If employee cannot be found, InvalidDataException is caught and error message is printed
+     * Usage (GET): http://localhost:8090/M7_P2_war_exploded/api/employees/getEmployeeRecord/?empNo=99999
+     *
+     * @param empNo Employee number to be retrieved, taken in as a Query Parameter
+     * @return JSON list of Employee Records or failure message if employee does not exist
+     */
+    @GET
+    @Path("/getEmployeeRecord")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getEmployeeRecord(@QueryParam("empNo") int empNo) {
+        try {
+            // Retrieve employee record
+            Employee emp = employeeDAO.getEmployeeRecords(empNo);
+            // return the requested Employee if all ok
+            return Response.ok().entity(emp).build();
+        } catch (EmptyResultException e) {
+            // if employee not found, catch exception and give Response
+            return Response.ok()
+                    .entity(e.getMessage())
+                    .build();
         }
     }
 
     /**
-     * Service for endpoint #2:
-     * method loads Employee entity and forces initialization, then returns it
+     * Endpoint #3: Get paginated EmployeeDTO records by department
+     * Retrieves paginated list of EmployeeDTO records belonging to some department,
+     * where the requested department is supplied as an argument and each page is
+     * limited to 20 entries.
+     * If department does not exist, page number invalid, or current page index has no employees,
+     * exceptions are caught and handled.
      *
-     * @param empNo The primary key of the Employee entity
-     * @return The Employee retrieved corresponding to the supplied primary key
+     * Usages (GET): (1) defaulted to page 1 (2) specifying page number
+     * (1) http://localhost:8090/M7_P2_war_exploded/api/employees/getAllEmployeeRecords/?departmentNo=d003
+     * (2) http://localhost:8090/M7_P2_war_exploded/api/employees/getAllEmployeeRecords/?departmentNo=d003&page=10
+     *
+     * @param departmentNo name of the department we wish to retrieve employees from
+     * @param page         1-indexed page number of the list we want. optional and defaults to 1
+     * @return JSON list of EmployeeRecordDTO if success or some HTTP errors upon validation failure
      */
-    public Employee getEmployeeRecords(int empNo) {
-        try (EntityManager em = JPAUtil.getEntityManager()) {
-            // find employee via primary key
-            Employee emp = em.find(Employee.class, empNo);
-            // check if employee found, then force initialization
-            if (emp != null) {
-                emp.getSalaryList().size();
-                emp.getDeptEmpList().size();
-                emp.getDeptManagerList().size();
-                emp.getTitleList().size();
-            }
-            return emp;
+    @GET
+    @Path("/getAllEmployeeRecords")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAllEmployeeRecords(
+            @QueryParam("departmentNo") String departmentNo,
+            @QueryParam("page") @DefaultValue("1") int page) {
+        try {
+            // retrieve the list of employee records
+            List<EmployeeRecordDTO> empRecords = employeeDAO.getAllEmployeeRecordsList(departmentNo, page);
+            return Response.ok().entity(empRecords).build();
+        } catch (InvalidDataException e) {
+            // if page number below 1 or department does not exist, exception is caught
+            return Response.status(400)
+                    .entity(e.getMessage())
+                    .build();
+        } catch (EmptyResultException e) {
+            // if page index specified contains no records, exception is caught
+            return Response.ok()
+                    .entity(e.getMessage())
+                    .build();
         }
     }
 
-    /**
-     * helper method for endpoint #2:
-     * checks whether a supplied String matches a real department number
-     *
-     * @param deptNo supplied department number to check for existence
-     * @return Department entity if it exists or null otherwise
-     */
-    public Department getDepartment(String deptNo) {
-        try (EntityManager em = JPAUtil.getEntityManager()) {
-            Department dept = em.find(Department.class, deptNo);
-            return dept;
-        }
-    }
+    // endpoint #4
+    @POST
+    @Path("/promote")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response promoteEmployee(EmployeePromotionRequest request) {
+        try {
+            // call your service to promote the employee
+            employeeDAO.promoteEmployee(request);
 
-    /**
-     * Service for endpoint #3:
-     * executes a named query to retrieve paginated list of EmployeeDTO objects,
-     * given a specific department and page
-     *
-     * @param deptNo The department number to filter
-     * @param page   requested page number for filtering
-     * @return paginated List of EmployeeRecordDTO objects, capped at 20 objects
-     */
-    public List<EmployeeRecordDTO> getAllEmployeeRecordsList(String deptNo, int page) {
-        try (EntityManager em = JPAUtil.getEntityManager()) {
-            // execute named query to retreive List of EmployeeDTO records
-            // we supply deptNo as a key, convert the page to 0-index, cap the results to 20
-            List<EmployeeRecordDTO> results = em.createNamedQuery("Employee.getDepartmentEmployeeRecords", EmployeeRecordDTO.class)
-                    .setParameter("deptNo", deptNo)
-                    .setFirstResult((page - 1) * 20)
-                    .setMaxResults(20)
-                    .getResultList();
-            return results;
-        }
-    }
-    // service for endpoint #4
-    public void promoteEmployee(EmployeePromotionRequest request) {
-        LocalDate today = LocalDate.now();
-
-        try (EntityManager em = JPAUtil.getEntityManager()) {
-            EntityTransaction tx = em.getTransaction();
-            tx.begin();
-
-            Employee emp = em.find(Employee.class, request.getEmpNo());
-            if (emp == null) {
-                tx.rollback();
-                throw new IllegalArgumentException("Employee not found");
-            }
-
-            // force initialization of collections to avoid LazyInitializationException
-            emp.getSalaryList().size();
-            emp.getTitleList().size();
-            emp.getDeptEmpList().size();
-            emp.getDeptManagerList().size();
-
-            // Get current title and salary
-            List<Title> titles = emp.getTitleList();
-            Title currentTitle = titles.isEmpty() ? null : titles.get(titles.size() - 1);
-
-            List<Salary> salaries = emp.getSalaryList();
-            Salary currentSalary = salaries.isEmpty() ? null : salaries.get(salaries.size() - 1);
-
-            String oldTitle = (currentTitle != null) ? currentTitle.getTitle() : "";
-            int oldSalary = (currentSalary != null) ? currentSalary.getSalary() : 0;
-            String newTitle = request.getNewTitle();
-            int newSalary = request.getNewSalary();
-
-            // --- Validation logic ---
-            if (newSalary <= 0) {
-                tx.rollback();
-                throw new IllegalArgumentException("0 or negative salary not allowed");
-            }
-
-            if (oldTitle.equals(newTitle)) {
-                if (newSalary < oldSalary) {
-                    tx.rollback();
-                    throw new IllegalArgumentException("Salary Decrement Not Allowed");
-                }
-            } else { // title is different
-                if (newSalary < oldSalary) {
-                    tx.rollback();
-                    throw new IllegalArgumentException("Salary Decrement Not Allowed");
-                }
-            }
-
-            // --- Close current title ---
-            if (currentTitle != null) {
-                currentTitle.setToDate(today.minusDays(1));
-                em.merge(currentTitle);
-            }
-
-            // --- Insert new title ---
-            Title newTitleEntity = new Title();
-            newTitleEntity.setEmployee(emp); // Employee object, matches @IdClass mapping
-            newTitleEntity.setTitle(newTitle);
-            newTitleEntity.setFromDate(today);
-            newTitleEntity.setToDate(LocalDate.of(9999, 12, 31));
-            //em.persist(newTitleEntity);
-            em.merge(newTitleEntity);
-
-            // --- Close current salary & insert new one ---
-            if (newSalary > 0) {
-                if (currentSalary != null) {
-                    currentSalary.setToDate(today.minusDays(1));
-                    em.merge(currentSalary);
-                }
-
-                Salary newSalaryEntity = new Salary();
-                newSalaryEntity.setEmployee(emp); // Employee object, matches @IdClass mapping
-                newSalaryEntity.setSalary(newSalary);
-                newSalaryEntity.setFromDate(today);
-                newSalaryEntity.setToDate(LocalDate.of(9999, 12, 31));
-                em.persist(newSalaryEntity);
-            }
-
-            tx.commit();
+            // return success response
+            return Response.status(Response.Status.CREATED)
+                    .entity("Employee promoted successfully")
+                    .build();
+        } catch (IllegalArgumentException e) {
+            // thrown if employee not found or title is invalid
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Promotion failed: " + e.getMessage())
+                    .build();
+        } catch (Exception e) {
+            // troubleshoot more unexpected errors
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Unexpected error: " + e.getMessage())
+                    .build();
         }
     }
 
