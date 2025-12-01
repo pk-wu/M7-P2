@@ -2,7 +2,7 @@ package org.DigiCorp;
 
 import jakarta.ws.rs.ApplicationPath;
 import jakarta.ws.rs.core.Application;
-import org.DigiCorp.resource.EmployeeResource;
+import org.DigiCorp.service.EmployeeService;
 import org.DigiCorp.util.ObjectMapperContextResolver;
 
 import java.util.HashSet;
@@ -25,7 +25,7 @@ public class EmpApp extends Application {
         // hashset to hold application components
         Set<Class<?>> s = new HashSet<Class<?>>();
         // adding Resource class
-        s.add(EmployeeResource.class);
+        s.add(EmployeeService.class);
         // adding customized context resolver for JSON serializing
         s.add(ObjectMapperContextResolver.class);
         // return the set of added classes
