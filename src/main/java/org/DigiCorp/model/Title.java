@@ -9,7 +9,7 @@ import java.time.LocalDate;
  * class represents titles table, recording history of job titles of
  * an employee.
  * Maps one-to-many relationship with Employee entity.
- * Uses composite primary key TitleId composed of empNo, title, fromDate
+ * Uses composite primary key TitleId composed of employee, title, fromDate
  */
 @Entity
 @Table(name = "titles")
@@ -17,14 +17,17 @@ import java.time.LocalDate;
 @IdClass(TitleId.class)
 public class Title {
 
+    // mapping
     /**
-     * employee number, part of composite primary key
+     * maps many-to-one relationship with Employee entity
+     * forms foreign key link via emp_no
      * JsonIgnore prevents serialization
      */
     @Id
-    @Column(name = "emp_no")
+    @ManyToOne
+    @JoinColumn(name = "emp_no", referencedColumnName = "emp_no")
     @JsonIgnore
-    private int empNo;
+    private Employee employee;
 
     /**
      * employee's job title, part of composite primary key
@@ -46,17 +49,6 @@ public class Title {
     @Column(name = "to_date")
     private LocalDate toDate;
 
-    // mapping
-    /**
-     * maps many-to-one relationship with Employee entity
-     * forms foreign key link via emp_no
-     * JsonIgnore prevents serialization
-     */
-    @ManyToOne
-    @JoinColumn(name = "emp_no", referencedColumnName = "emp_no")
-    @JsonIgnore
-    private Employee employee;
-
     // constructors
 
     /**
@@ -68,13 +60,13 @@ public class Title {
     /**
      * parameterized constructor to create Title instance
      *
-     * @param empNo    employee unique ID int
+     * @param employee Employee object
      * @param title    job title
      * @param fromDate starting date for the title
      * @param toDate   ending date for the title
      */
-    public Title(int empNo, String title, LocalDate fromDate, LocalDate toDate) {
-        this.empNo = empNo;
+    public Title(Employee employee, String title, LocalDate fromDate, LocalDate toDate) {
+        this.employee = employee;
         this.title = title;
         this.fromDate = fromDate;
         this.toDate = toDate;
@@ -83,108 +75,89 @@ public class Title {
     // getters and setters
 
     /**
-     * retrieves employee number
+     * retrieves associated Employee entity
      *
-     * @return the employee number
-     */
-    public int getEmpNo() {
-        return empNo;
-    }
-
-    /**
-     * sets the employee number
-     *
-     * @param empNo the new employee number
-     */
-    public void setEmpNo(int empNo) {
-        this.empNo = empNo;
-    }
-
-    /**
-     * retrieves the job title
-     *
-     * @return the job title
-     */
-    public String getTitle() {
-        return title;
-    }
-
-    /**
-     * sets the job title
-     *
-     * @param title the new job title
-     */
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    /**
-     * retrieves the starting date of the title, fromDate
-     *
-     * @return the starting date of the title, fromDate
-     */
-    public LocalDate getFromDate() {
-        return fromDate;
-    }
-
-    /**
-     * sets the starting date of the title, fromDate
-     *
-     * @param fromDate the new starting date of the title, fromDate
-     */
-    public void setFromDate(LocalDate fromDate) {
-        this.fromDate = fromDate;
-    }
-
-    /**
-     * retrieves the ending date of the title, toDate
-     *
-     * @return the ending date of the title, toDate
-     */
-    public LocalDate getToDate() {
-        return toDate;
-    }
-
-    /**
-     * sets the ending date of the title, toDate
-     *
-     * @param toDate the new ending date of the title, toDate
-     */
-    public void setToDate(LocalDate toDate) {
-        this.toDate = toDate;
-    }
-
-    /**
-     * retrieves the associated Employee entity
-     *
-     * @return the associated Employee object
+     * @return Employee object
      */
     public Employee getEmployee() {
         return employee;
     }
 
     /**
-     * sets the associated Employee entity
+     * sets associated Employee entity
      *
-     * @param employee the new associated Employee object
+     * @param employee Employee object
      */
     public void setEmployee(Employee employee) {
         this.employee = employee;
     }
 
     /**
+     * retrieves job title
+     *
+     * @return job title string
+     */
+    public String getTitle() {
+        return title;
+    }
+
+    /**
+     * sets job title
+     *
+     * @param title job title string
+     */
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    /**
+     * retrieves starting date of title
+     *
+     * @return starting date, fromDate
+     */
+    public LocalDate getFromDate() {
+        return fromDate;
+    }
+
+    /**
+     * sets starting date of title
+     *
+     * @param fromDate starting date of title
+     */
+    public void setFromDate(LocalDate fromDate) {
+        this.fromDate = fromDate;
+    }
+
+    /**
+     * retrieves ending date of title
+     *
+     * @return ending date, toDate
+     */
+    public LocalDate getToDate() {
+        return toDate;
+    }
+
+    /**
+     * sets ending date of title
+     *
+     * @param toDate ending date of title
+     */
+    public void setToDate(LocalDate toDate) {
+        this.toDate = toDate;
+    }
+
+    /**
      * provides string representation of Title
      *
-     * @return formatted string containing the title attributes
+     * @return formatted string containing title attributes
      */
     @Override
     public String toString() {
         return "Title{" +
-                "empNo=" + empNo +
+                "employee=" + employee +
                 ", title='" + title + '\'' +
                 ", fromDate=" + fromDate +
                 ", toDate=" + toDate +
-                ", employee=" + employee +
                 '}';
     }
 }
