@@ -6,15 +6,16 @@ import java.util.Objects;
 
 /**
  * class serves as composite primary key for Salary entity
- * combines employee number and start date to uniquely
+ * combines employee reference and start date to uniquely
  * identify Salary record.
  * implements Serializable as required for @IdClass implementation
  */
 public class SalaryId implements Serializable {
     /**
-     * employee's id number, part of primary composite key
+     * employee entity reference, part of primary composite key
      */
-    private int empNo;
+    private int employee; // maps to Employee.empNo
+
     /**
      * employee's start date of salary, part of primary composite key
      */
@@ -29,32 +30,32 @@ public class SalaryId implements Serializable {
     /**
      * parameterized constructor to create new composite key instance
      *
-     * @param empNo    employee's unique ID int
+     * @param employee Employee's unique ID int
      * @param fromDate starting date of the salary entry
      */
-    public SalaryId(int empNo, LocalDate fromDate) {
-        this.empNo = empNo;
+    public SalaryId(int employee, LocalDate fromDate) {
+        this.employee = employee;
         this.fromDate = fromDate;
     }
 
     // getters and setters
 
     /**
-     * retrieves the employee number
+     * retrieves the employee ID
      *
-     * @return the employee number
+     * @return the employee ID
      */
-    public int getEmpNo() {
-        return empNo;
+    public int getEmployee() {
+        return employee;
     }
 
     /**
-     * sets the employee number
+     * sets the employee ID
      *
-     * @param empNo the new employee number
+     * @param employee the new employee ID
      */
-    public void setEmpNo(int empNo) {
-        this.empNo = empNo;
+    public void setEmployee(int employee) {
+        this.employee = employee;
     }
 
     /**
@@ -85,8 +86,11 @@ public class SalaryId implements Serializable {
      */
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof SalaryId salaryId)) return false;
-        return empNo == salaryId.empNo && Objects.equals(fromDate, salaryId.fromDate);
+        if (this == o) return true;
+        if (!(o instanceof SalaryId)) return false;
+        SalaryId that = (SalaryId) o;
+        return employee == that.employee &&
+                Objects.equals(fromDate, that.fromDate);
     }
 
     /**
@@ -96,6 +100,6 @@ public class SalaryId implements Serializable {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(empNo, fromDate);
+        return Objects.hash(employee, fromDate);
     }
 }
