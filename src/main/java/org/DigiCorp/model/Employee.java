@@ -60,28 +60,28 @@ public class Employee {
      * list of employee's salary records
      * maps one-to-many relationship to Salary entity
      */
-    @OneToMany(mappedBy = "employee", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "employee", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Salary> salaryList;
 
     /**
      * list of employee's title records
      * maps one-to-many relationship to Title entity
      */
-    @OneToMany(mappedBy = "employee", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "employee", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Title> titleList;
 
     /**
      * list of employee's department assignment records
      * maps one-to-many relationship to DeptEmp entity
      */
-    @OneToMany(mappedBy = "employee", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "employee", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<DeptEmp> deptEmpList;
 
     /**
      * list of employee's manager assignment records
      * maps one-to-many relationship to DeptManager entity
      */
-    @OneToMany(mappedBy = "employee", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "employee", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<DeptManager> deptManagerList;
 
 
