@@ -117,17 +117,31 @@ public class EmployeeResource {
         return Response.ok().entity(empRecords).build();
     }
 
-
     // endpoint #4
     @POST
     @Path("/promote")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-//    public Response promoteEmployee(EmployeePromotionRequest request) {
-    public Response promoteEmployee() {
-        // call EmployeeService.promoteEmployee(request)
+    public Response promoteEmployee(EmployeePromotionRequest request) {
+        try {
+            // call your service to promote the employee
+            employeeService.promoteEmployee(request);
 
-        return Response.status(Response.Status.CREATED).build();
+            // return success response
+            return Response.status(Response.Status.CREATED)
+                    .entity("Employee promoted successfully")
+                    .build();
+        } catch (IllegalArgumentException e) {
+            // thrown if employee not found or title is invalid
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Promotion failed: " + e.getMessage())
+                    .build();
+        } catch (Exception e) {
+            // troubleshoot more unexpected errors
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Unexpected error: " + e.getMessage())
+                    .build();
+        }
     }
 
 }
