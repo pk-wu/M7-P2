@@ -80,7 +80,7 @@ public class DeptEmp {
     /**
      * Parameterized constructor to create DeptEmp instance
      *
-     * @param empNo    employee unique ID int
+     * @param employee    employee unique ID int
      * @param deptNo   department unique ID String
      * @param fromDate first date working in department
      * @param toDate   last date working in department
