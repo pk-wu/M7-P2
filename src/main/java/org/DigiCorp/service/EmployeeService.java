@@ -126,6 +126,7 @@ public class EmployeeService {
     @Produces(MediaType.APPLICATION_JSON)
     public Response promoteEmployee(EmployeePromotionRequest request) {
         try {
+            validateRequest(request);
             // call your service to promote the employee
             employeeDAO.promoteEmployee(request);
 
@@ -142,6 +143,33 @@ public class EmployeeService {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Unexpected error: " + e.getMessage())
                     .build();
+        }
+    }
+
+    public void validateRequest(EmployeePromotionRequest request) throws InvalidDataException {
+        if (request.getEmpNo() == null) {
+            throw new InvalidDataException("Employee was not provided");
+        }
+        // check for department validity
+        final List<String> DEPARTMENTS_LIST = List.of(
+                "d001",
+                "d002",
+                "d003",
+                "d004",
+                "d005",
+                "d006",
+                "d007",
+                "d008",
+                "d009"
+        );
+        if (request.getNewDeptNo() != null && !DEPARTMENTS_LIST.contains(request.getNewDeptNo())) {
+            throw new InvalidDataException("Department "+request.getNewDeptNo() +" does not exist!");
+        }
+        // CHECK: input title more than 0 less than 51
+        if (request.getNewTitle() != null) {
+            if (request.getNewTitle().isEmpty() || request.getNewTitle().length() > 50) {
+                throw new InvalidDataException("New Title length invalid");
+            }
         }
     }
 
