@@ -61,7 +61,7 @@ public class Employee {
      * maps one-to-many relationship to Salary entity
      */
     @OneToMany(mappedBy = "employee", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @OrderBy("toDate ASC")
+    @OrderBy("toDate ASC, fromDate ASC")
     private List<Salary> salaryList;
 
     /**
@@ -69,7 +69,7 @@ public class Employee {
      * maps one-to-many relationship to Title entity
      */
     @OneToMany(mappedBy = "employee", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @OrderBy("toDate ASC")
+    @OrderBy("toDate ASC, fromDate ASC")
     private List<Title> titleList;
 
     /**
@@ -77,7 +77,7 @@ public class Employee {
      * maps one-to-many relationship to DeptEmp entity
      */
     @OneToMany(mappedBy = "employee", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @OrderBy("toDate ASC")
+    @OrderBy("toDate ASC, fromDate ASC")
     private List<DeptEmp> deptEmpList;
 
     /**
@@ -85,7 +85,7 @@ public class Employee {
      * maps one-to-many relationship to DeptManager entity
      */
     @OneToMany(mappedBy = "employee", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @OrderBy("toDate ASC")
+    @OrderBy("toDate ASC, fromDate ASC")
     private List<DeptManager> deptManagerList;
 
 
