@@ -130,6 +130,7 @@ public class EmployeeService {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response promoteEmployee(EmployeePromotionRequest request) {
+        // try to process promotion request, throw & catch errors if unsuccessful
         try {
             // call helper method to validate
             Helper.validateRequest(request);
@@ -142,6 +143,7 @@ public class EmployeeService {
                     .entity("Employee promoted successfully")
                     .build();
         } catch (InvalidDataException e) {
+            // catch exceptions we throw if promotion fails, return a response
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity("Promotion failed: " + e.getMessage())
                     .build();
@@ -152,5 +154,4 @@ public class EmployeeService {
                     .build();
         }
     }
-
 }
