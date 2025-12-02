@@ -1,23 +1,25 @@
 package org.DigiCorp.dto;
 
 public class EmployeePromotionRequest {
-    private int empNo;
+    private Integer empNo;
     private String newTitle;
-    private int newSalary;
+    private Integer newSalary;
+    private String newDeptNo;
 
     public EmployeePromotionRequest() {}
 
-    public EmployeePromotionRequest(int empNo, String newTitle, int newSalary) {
+    public EmployeePromotionRequest(Integer empNo, String newTitle, Integer newSalary, String newDepartment) {
         this.empNo = empNo;
         this.newTitle = newTitle;
         this.newSalary = newSalary;
+        this.newDeptNo = newDepartment;
     }
 
-    public int getEmpNo() {
+    public Integer getEmpNo() {
         return empNo;
     }
 
-    public void setEmpNo(int empNo) {
+    public void setEmpNo(Integer empNo) {
         this.empNo = empNo;
     }
 
@@ -29,11 +31,19 @@ public class EmployeePromotionRequest {
         this.newTitle = newTitle;
     }
 
-    public int getNewSalary() {
+    public Integer getNewSalary() {
         return newSalary;
     }
 
-    public void setNewSalary(int newSalary) {
+    public void setNewSalary(Integer newSalary) {
         this.newSalary = newSalary;
+    }
+
+    public String getNewDeptNo() {
+        return newDeptNo;
+    }
+
+    public void setNewDeptNo(String newDeptNo) {
+        this.newDeptNo = newDeptNo;
     }
 }
