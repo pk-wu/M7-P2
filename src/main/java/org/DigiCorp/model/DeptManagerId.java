@@ -10,9 +10,9 @@ import java.util.Objects;
  */
 public class DeptManagerId implements Serializable {
     /**
-     * employee number that is a primary composite key
+     * employee that is a primary composite key
      */
-    private int empNo;
+    private Employee employee;
     /**
      * department number that is a primary composite key
      */
@@ -27,11 +27,11 @@ public class DeptManagerId implements Serializable {
     /**
      * parameterized constructor to create new DeptManagerId instance
      *
-     * @param empNo  employee unique ID int
+     * @param employee  employee unique ID int
      * @param deptNo department unique ID string
      */
-    public DeptManagerId(int empNo, String deptNo) {
-        this.empNo = empNo;
+    public DeptManagerId(Employee employee, String deptNo) {
+        this.employee = employee;
         this.deptNo = deptNo;
     }
 
@@ -42,17 +42,23 @@ public class DeptManagerId implements Serializable {
      *
      * @return the employee number
      */
-    public int getEmpNo() {
-        return empNo;
+//    public int getEmpNo() {
+//        return empNo;
+//    }
+    public Employee getEmployee() {
+        return employee;
     }
 
     /**
      * sets employee number
      *
-     * @param empNo the new employee number
+     * @param employee the new employee number
      */
-    public void setEmpNo(int empNo) {
-        this.empNo = empNo;
+//    public void setEmpNo(int empNo) {
+//        this.empNo = empNo;
+//    }
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
     }
 
     /**
@@ -75,26 +81,15 @@ public class DeptManagerId implements Serializable {
 
     // equals and hashcode
 
-    /**
-     * compares object for equality
-     *
-     * @param o object to be compared for equality
-     * @return boolean true if objects equal or false otherwise
-     */
+
     @Override
     public boolean equals(Object o) {
-        // provides logic to check for equality
         if (!(o instanceof DeptManagerId that)) return false;
-        return empNo == that.empNo && Objects.equals(deptNo, that.deptNo);
+        return Objects.equals(employee, that.employee) && Objects.equals(deptNo, that.deptNo);
     }
 
-    /**
-     * returns hash code value for object
-     *
-     * @return hash code value for this object
-     */
     @Override
     public int hashCode() {
-        return Objects.hash(empNo, deptNo);
+        return Objects.hash(employee, deptNo);
     }
 }

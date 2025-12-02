@@ -16,13 +16,25 @@ import java.time.LocalDate;
 @IdClass(DeptEmpId.class)
 public class DeptEmp {
 
+//    /**
+//     * employee number primary composite key, with JsonIgnore preventing serialization
+//     */
+//    @Id
+//    @Column(name = "emp_no")
+//    @JsonIgnore
+//    private int empNo;
+//
+    // mapping
     /**
-     * employee number primary composite key, with JsonIgnore preventing serialization
+     * maps many-to-one relationship to Employee
+     * is the foreign key mapping to emp_no
+     * JsonIgnore annotations prevents JSON serialization
      */
     @Id
-    @Column(name = "emp_no")
+    @ManyToOne
+    @JoinColumn(name = "emp_no", referencedColumnName = "emp_no")
     @JsonIgnore
-    private int empNo;
+    private Employee employee;
 
     /**
      * department number primary composite key
@@ -44,16 +56,7 @@ public class DeptEmp {
     @Column(name = "to_date")
     private LocalDate toDate;
 
-    // mapping
-    /**
-     * maps many-to-one relationship to Employee
-     * is the foreign key mapping to emp_no
-     * JsonIgnore annotations prevents JSON serialization
-     */
-    @ManyToOne
-    @JoinColumn(name = "emp_no", referencedColumnName = "emp_no")
-    @JsonIgnore
-    private Employee employee;
+
 
     /**
      * maps many-to-one relationship to Department
@@ -61,7 +64,7 @@ public class DeptEmp {
      * JsonIgnore annotation prevents JSON serialization
      */
     @ManyToOne
-    @JoinColumn(name = "dept_no", referencedColumnName = "dept_no")
+    @JoinColumn(name = "dept_no", referencedColumnName = "dept_no",insertable = false, updatable = false)
     @JsonIgnore
     private Department department;
 
@@ -82,32 +85,38 @@ public class DeptEmp {
      * @param fromDate first date working in department
      * @param toDate   last date working in department
      */
-    public DeptEmp(int empNo, String deptNo, LocalDate fromDate, LocalDate toDate) {
-        this.empNo = empNo;
+//    public DeptEmp(int empNo, String deptNo, LocalDate fromDate, LocalDate toDate) {
+//        this.empNo = empNo;
+//        this.deptNo = deptNo;
+//        this.fromDate = fromDate;
+//        this.toDate = toDate;
+//    }
+
+    public DeptEmp(Employee employee, String deptNo, LocalDate fromDate, LocalDate toDate) {
+        this.employee = employee;
         this.deptNo = deptNo;
         this.fromDate = fromDate;
         this.toDate = toDate;
     }
-
     // getters and setters
 
-    /**
-     * retrieves employee number
-     *
-     * @return employee number
-     */
-    public int getEmpNo() {
-        return empNo;
-    }
-
-    /**
-     * sets the employee number
-     *
-     * @param empNo the new employee number
-     */
-    public void setEmpNo(int empNo) {
-        this.empNo = empNo;
-    }
+//    /**
+//     * retrieves employee number
+//     *
+//     * @return employee number
+//     */
+//    public int getEmpNo() {
+//        return empNo;
+//    }
+//
+//    /**
+//     * sets the employee number
+//     *
+//     * @param empNo the new employee number
+//     */
+//    public void setEmpNo(int empNo) {
+//        this.empNo = empNo;
+//    }
 
     /**
      * retrieves the department number
@@ -207,11 +216,10 @@ public class DeptEmp {
     @Override
     public String toString() {
         return "DeptEmp{" +
-                "empNo=" + empNo +
+                "employee=" + employee +
                 ", deptNo='" + deptNo + '\'' +
                 ", fromDate=" + fromDate +
                 ", toDate=" + toDate +
-                ", employee=" + employee +
                 ", department=" + department +
                 '}';
     }

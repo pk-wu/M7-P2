@@ -68,6 +68,7 @@ public class Employee {
      * maps one-to-many relationship to Title entity
      */
     @OneToMany(mappedBy = "employee", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OrderBy("toDate ASC")
     private List<Title> titleList;
 
     /**
