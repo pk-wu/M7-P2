@@ -5,6 +5,7 @@ import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.TypedQuery;
 import org.DigiCorp.dto.*;
 import org.DigiCorp.exceptions.InvalidDataException;
+import org.DigiCorp.helper.Helper;
 import org.DigiCorp.model.*;
 import org.DigiCorp.util.JPAUtil;
 
@@ -16,17 +17,6 @@ import java.util.List;
  * and the database (manages transactions, executes queries)
  */
 public class EmployeeDAO {
-
-    // list of allowed titles
-    private final List<String> ALLOWED_TITLES = List.of(
-            "Assistant Engineer",
-            "Engineer",
-            "Senior Engineer",
-            "Staff",
-            "Senior Staff",
-            "Technique Leader",
-            "Manager"
-    );
 
     /**
      * Service for endpoint #1:
@@ -71,12 +61,6 @@ public class EmployeeDAO {
     public List<EmployeeRecordDTO> getAllEmployeeRecordsList(String deptNo, int page) throws InvalidDataException {
 
         try (EntityManager em = JPAUtil.getEntityManager()) {
-            // CHECK: if department doesn't exist, throw InvalidDataException
-            Department dept = em.find(Department.class, deptNo);
-            if (dept == null) {
-                throw new InvalidDataException("Department " + deptNo + " does not exist.");
-            }
-
             // execute named query to retrieve List of EmployeeDTO records
             // we supply deptNo as a key, convert the page to 0-index, cap the results to 20
             List<EmployeeRecordDTO> results = em.createNamedQuery("Employee.getDepartmentEmployeeRecords", EmployeeRecordDTO.class)
@@ -199,10 +183,6 @@ public class EmployeeDAO {
             if (currentSalary.getToDate().compareTo(LocalDate.of(9999, 01, 01)) != 0) {
                 throw new InvalidDataException("Employee is no longer with the company");
             }
-            // CHECK: at least one value is being updated
-            if (request.getNewSalary() == null && request.getNewTitle() == null && request.getNewDeptNo() == null) {
-                throw new InvalidDataException("No data was supplied");
-            }
             // CHECK: is there any real update
             boolean salaryChanged = request.getNewSalary() != null
                     && request.getNewSalary() != currentSalary.getSalary();
@@ -226,10 +206,7 @@ public class EmployeeDAO {
                 // --- update salary ---
                 // attempt salary update if supplied in the payload
                 if (salaryChanged) {
-                    // CHECK: salary value is legal
-                    if (request.getNewSalary() < 1 || request.getNewSalary() > 999999999) {
-                        throw new InvalidDataException("Salary value out of range");
-                    }
+
                     // CHECK: if ONLY salary is being updated, salary must go up
                     if (!titleChanged && !deptChanged) {
                         if (currentSalary.getSalary() >= request.getNewSalary()) {
@@ -265,12 +242,6 @@ public class EmployeeDAO {
                     }
 
                     // CHECK: disallow updating if the composite key we try to use already exists
-                    // salary change + dept same should not enter new entry
-//                    for (DeptEmp deptEmp : deptEmps) {
-//                        if (deptEmp.getDeptNo().equals(request.getNewDeptNo())) {
-//                            throw new InvalidDataException("Employee cannot return to their previous department");
-//                        }
-//                    }
                     for (DeptEmp deptEmp : deptEmps) {
                         if (deptEmp.getDeptNo().equals(request.getNewDeptNo())) {
                             throw new InvalidDataException("Employee cannot return to their previous department");
@@ -285,40 +256,29 @@ public class EmployeeDAO {
 
                 }
 
-                // --- update title ---
+
                 if (titleChanged) {
-                    // CHECK: new title supplied is legal
-//                    if (!ALLOWED_TITLES.contains(request.getNewTitle())) {
-//                        throw new InvalidDataException("Title " + request.getNewTitle() + " does not exist");
-//                    }
+                    // --- update title ---
+                    // ensure title input is title case
+                    String inputTitle = Helper.toTitleCase(request.getNewTitle());
+
                     // CHECK: if ONLY title is being updated, title must change
                     if (!salaryChanged && !deptChanged) {
-                        if (currentTitle.getTitle().equalsIgnoreCase(request.getNewTitle())) {
-                            throw new InvalidDataException("Employee already has title " + request.getNewTitle());
+                        if (currentTitle.getTitle().equals(inputTitle)) {
+                            throw new InvalidDataException("Employee already has title " + inputTitle);
                         }
                     }
 
                     // CHECK: disallow updating if the composite key we try to use already exists
                     for (Title title : titles) {
-                        if (title.getTitle().equalsIgnoreCase(request.getNewTitle()) && title.getFromDate().isEqual(today)) {
+                        if (title.getTitle().equals(inputTitle) && title.getFromDate().isEqual(today)) {
                             throw new InvalidDataException("Employee has already been promoted to this title today");
                         }
                     }
                     // Perform title update:
                     // update old title entry, insert the new title entry
-
-                    // ensure title input is title case
-                    StringBuilder titleCasedTitle = new StringBuilder();
-                    for (String word : request.getNewTitle().split("\\s+")) {
-                        if (!word.isEmpty()) {
-                            titleCasedTitle.append(Character.toUpperCase(word.charAt(0)))
-                                    .append(word.substring(1).toLowerCase())
-                                    .append(" ");
-                        }
-                    }
-
                     currentTitle.setToDate(today);
-                    Title newTitle = new Title(emp, titleCasedTitle.toString().trim(), today, LocalDate.of(9999, 01, 01));
+                    Title newTitle = new Title(emp, inputTitle, today, LocalDate.of(9999, 01, 01));
                     em.merge(currentTitle);
                     em.persist(newTitle);
 

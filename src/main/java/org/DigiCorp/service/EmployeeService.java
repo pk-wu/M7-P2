@@ -5,8 +5,8 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.DigiCorp.dto.EmployeePromotionRequest;
 import org.DigiCorp.dto.EmployeeRecordDTO;
-import org.DigiCorp.exceptions.EmptyResultException;
 import org.DigiCorp.exceptions.InvalidDataException;
+import org.DigiCorp.helper.Helper;
 import org.DigiCorp.model.Department;
 import org.DigiCorp.model.Employee;
 import org.DigiCorp.dao.EmployeeDAO;
@@ -81,7 +81,7 @@ public class EmployeeService {
      * limited to 20 entries.
      * If department does not exist, page number invalid, or current page index has no employees,
      * exceptions are caught and handled.
-     * <p>
+     *
      * Usages (GET): (1) defaulted to page 1 (2) specifying page number
      * (1) http://localhost:8090/M7_P2_war_exploded/api/employees/getAllEmployeeRecords/?departmentNo=d003
      * (2) http://localhost:8090/M7_P2_war_exploded/api/employees/getAllEmployeeRecords/?departmentNo=d003&page=10
@@ -102,7 +102,12 @@ public class EmployeeService {
                     .entity("Page number must be greater than or equal to 1!")
                     .build();
         }
+
         try {
+            // CHECK: if department doesn't exist, throw InvalidDataException
+            if (!Helper.isDepartmentValid(departmentNo)) {
+                throw new InvalidDataException("Department " + departmentNo + " does not exist.");
+            }
             // retrieve the list of employee records
             List<EmployeeRecordDTO> empRecords = employeeDAO.getAllEmployeeRecordsList(departmentNo, page);
             // CHECK: retrieved page is empty we return appropriate message
@@ -126,7 +131,9 @@ public class EmployeeService {
     @Produces(MediaType.APPLICATION_JSON)
     public Response promoteEmployee(EmployeePromotionRequest request) {
         try {
-            validateRequest(request);
+            // call helper method to validate
+            Helper.validateRequest(request);
+
             // call your service to promote the employee
             employeeDAO.promoteEmployee(request);
 
@@ -134,7 +141,7 @@ public class EmployeeService {
             return Response.status(Response.Status.CREATED)
                     .entity("Employee promoted successfully")
                     .build();
-        }catch (InvalidDataException e) {
+        } catch (InvalidDataException e) {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity("Promotion failed: " + e.getMessage())
                     .build();
@@ -143,33 +150,6 @@ public class EmployeeService {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Unexpected error: " + e.getMessage())
                     .build();
-        }
-    }
-
-    public void validateRequest(EmployeePromotionRequest request) throws InvalidDataException {
-        if (request.getEmpNo() == null) {
-            throw new InvalidDataException("Employee was not provided");
-        }
-        // check for department validity
-        final List<String> DEPARTMENTS_LIST = List.of(
-                "d001",
-                "d002",
-                "d003",
-                "d004",
-                "d005",
-                "d006",
-                "d007",
-                "d008",
-                "d009"
-        );
-        if (request.getNewDeptNo() != null && !DEPARTMENTS_LIST.contains(request.getNewDeptNo())) {
-            throw new InvalidDataException("Department "+request.getNewDeptNo() +" does not exist!");
-        }
-        // CHECK: input title more than 0 less than 51
-        if (request.getNewTitle() != null) {
-            if (request.getNewTitle().isEmpty() || request.getNewTitle().length() > 50) {
-                throw new InvalidDataException("New Title length invalid");
-            }
         }
     }
 
