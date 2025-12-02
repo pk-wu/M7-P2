@@ -19,7 +19,7 @@ import java.util.List;
 public class EmployeeDAO {
 
     /**
-     * Service for endpoint #1:
+     * Logic for endpoint #1:
      * executes a named query to retrieve a list of Departments
      *
      * @return List of Department entities
@@ -33,7 +33,7 @@ public class EmployeeDAO {
     }
 
     /**
-     * Service for endpoint #2:
+     * Logic for endpoint #2:
      * method loads Employee entity and forces initialization, then returns it.
      *
      * @param empNo the primary key of the Employee entity
@@ -49,7 +49,7 @@ public class EmployeeDAO {
 
 
     /**
-     * Service for endpoint #3:
+     * Logic for endpoint #3:
      * executes a named query to retrieve paginated list of EmployeeDTO objects,
      * given a specific department and page.
      *
@@ -72,91 +72,12 @@ public class EmployeeDAO {
         }
     }
 
-
-    // service for endpoint #4
-//    public void promoteEmployee(EmployeePromotionRequest request) {
-//        LocalDate today = LocalDate.now();
-//
-//        try (EntityManager em = JPAUtil.getEntityManager()) {
-//            EntityTransaction tx = em.getTransaction();
-//            tx.begin();
-//
-//            Employee emp = em.find(Employee.class, request.getEmpNo());
-//            if (emp == null) {
-//                tx.rollback();
-//                throw new IllegalArgumentException("Employee not found");
-//            }
-//
-//            // force initialization of collections to avoid LazyInitializationException
-//            emp.getSalaryList().size();
-//            emp.getTitleList().size();
-//            emp.getDeptEmpList().size();
-//            emp.getDeptManagerList().size();
-//
-//            // Get current title and salary
-//            List<Title> titles = emp.getTitleList();
-//            Title currentTitle = titles.isEmpty() ? null : titles.get(titles.size() - 1);
-//
-//            List<Salary> salaries = emp.getSalaryList();
-//            Salary currentSalary = salaries.isEmpty() ? null : salaries.get(salaries.size() - 1);
-//
-//            String oldTitle = (currentTitle != null) ? currentTitle.getTitle() : "";
-//            int oldSalary = (currentSalary != null) ? currentSalary.getSalary() : 0;
-//            String newTitle = request.getNewTitle();
-//            int newSalary = request.getNewSalary();
-//
-//            // --- Validation logic ---
-//            if (newSalary <= 0) {
-//                tx.rollback();
-//                throw new IllegalArgumentException("0 or negative salary not allowed");
-//            }
-//
-//            if (oldTitle.equals(newTitle)) {
-//                if (newSalary < oldSalary) {
-//                    tx.rollback();
-//                    throw new IllegalArgumentException("Salary Decrement Not Allowed");
-//                }
-//            } else { // title is different
-//                if (newSalary < oldSalary) {
-//                    tx.rollback();
-//                    throw new IllegalArgumentException("Salary Decrement Not Allowed");
-//                }
-//            }
-//
-//            // --- Close current title ---
-//            if (currentTitle != null) {
-//                currentTitle.setToDate(today.minusDays(1));
-//                em.merge(currentTitle);
-//            }
-//
-//            // --- Insert new title ---
-//            Title newTitleEntity = new Title();
-//            newTitleEntity.setEmployee(emp); // Employee object, matches @IdClass mapping
-//            newTitleEntity.setTitle(newTitle);
-//            newTitleEntity.setFromDate(today);
-//            newTitleEntity.setToDate(LocalDate.of(9999, 12, 31));
-//            //em.persist(newTitleEntity);
-//            em.merge(newTitleEntity);
-//
-//            // --- Close current salary & insert new one ---
-//            if (newSalary > 0) {
-//                if (currentSalary != null) {
-//                    currentSalary.setToDate(today.minusDays(1));
-//                    em.merge(currentSalary);
-//                }
-//
-//                Salary newSalaryEntity = new Salary();
-//                newSalaryEntity.setEmployee(emp); // Employee object, matches @IdClass mapping
-//                newSalaryEntity.setSalary(newSalary);
-//                newSalaryEntity.setFromDate(today);
-//                newSalaryEntity.setToDate(LocalDate.of(9999, 12, 31));
-//                em.persist(newSalaryEntity);
-//            }
-//
-//            tx.commit();
-//        }
-//    }
-
+    /**
+     * Logic for endpoint #4:
+     * promotes employee
+     * @param request JSON request passed in via postman
+     * @throws InvalidDataException thrown when failed to promote for any reason
+     */
     public void promoteEmployee(EmployeePromotionRequest request) throws InvalidDataException {
         try (EntityManager em = JPAUtil.getEntityManager()) {
             // CHECK: Employee must exist
@@ -165,7 +86,7 @@ public class EmployeeDAO {
                 throw new InvalidDataException("Employee does not exist");
             }
 
-            // Get current title, salary, deptEmp  , and deptManager
+            // Get current title, salary, deptEmp, and deptManager
             List<Title> titles = emp.getTitleList();
             Title currentTitle = titles.isEmpty() ? null : titles.get(titles.size() - 1);
 
@@ -193,6 +114,7 @@ public class EmployeeDAO {
             boolean titleChanged = request.getNewTitle() != null
                     && !request.getNewTitle().equalsIgnoreCase(currentTitle.getTitle());
 
+            // CHECK: if supplied data same as existing data, no changes made, throw error
             if (!salaryChanged && !deptChanged && !titleChanged) {
                 throw new InvalidDataException("Data supplied matches existing data");
             }
@@ -256,10 +178,38 @@ public class EmployeeDAO {
 
                 }
 
+                // Manager -> Manager
+                // we handle here because the title does not change
+                if (currentTitle.getTitle().equals("Manager") && !titleChanged && deptChanged) {
+                    // get the new department the manager is transferring to
+                    String targetDept = request.getNewDeptNo();
 
+                    // check if the department we want to transfer to already has entry
+                    boolean duplicateManager = false;
+                    for (DeptManager deptMgr : deptManagers) {
+                        if (deptMgr.getDeptNo().equals(targetDept)) {
+                            duplicateManager = true;
+                            break;
+                        }
+                    }
+                    // throw error if target department already has entry
+                    if (duplicateManager) {
+                        throw new InvalidDataException("Employee was previously a manager in this department!");
+                    }
+
+                    // close current manager record
+                    currentDeptManager.setToDate(today);
+                    em.merge(currentDeptManager);
+
+                    // open new manager record in new department
+                    DeptManager newManager = new DeptManager(emp, targetDept, today, LocalDate.of(9999, 1, 1));
+                    em.persist(newManager);
+                }
+
+
+                // --- update title ---
                 if (titleChanged) {
-                    // --- update title ---
-                    // ensure title input is title case
+                    // use helper method to ensure title input is title case
                     String inputTitle = Helper.toTitleCase(request.getNewTitle());
 
                     // CHECK: if ONLY title is being updated, title must change
@@ -284,14 +234,14 @@ public class EmployeeDAO {
 
                     // if title is manager, requires additional handling
                     // Manager -> Non-Manager
-                    if (currentTitle.getTitle().equals("Manager") && !request.getNewTitle().equals("Manager")) {
+                    if (currentTitle.getTitle().equals("Manager") && !inputTitle.equals("Manager")) {
                         // set end date for manager
                         currentDeptManager.setToDate(today);
                         em.merge(currentDeptManager);
                     }
-                    // xx -> Manager
-                    if (request.getNewTitle().equals("Manager")) {
-                        // we need targetDept in the event we retain same dept & promote
+                    // Non-Manager -> Manager
+                    if (inputTitle.equals("Manager")) {
+                        // we need targetDept handles situation where new dept not supplied
                         String targetDept = (request.getNewDeptNo() != null)
                                 ? request.getNewDeptNo()
                                 : currentDeptEmp.getDeptNo();
@@ -303,123 +253,23 @@ public class EmployeeDAO {
                                 break;
                             }
                         }
-                        // Non-Manager -> Manager
-                        if (!currentTitle.getTitle().equals("Manager")) {
-                            // add new entry into manager table, with the same department
-                            if (duplicateManager) {
-                                throw new InvalidDataException("Employee was previously a manager in this department!");
-                            }
-                            DeptManager newManager = new DeptManager(emp, targetDept, today, LocalDate.of(9999, 01, 01));
-                            em.persist(newManager);
+                        if (duplicateManager) {
+                            throw new InvalidDataException("Employee was previously a manager in this department!");
                         }
-                        // Manager -> Manager (salary/dept change)
-                        if (currentTitle.getTitle().equals("Manager")) {
-                            if (request.getNewDeptNo() != null && !currentDeptEmp.getDeptNo().equals(request.getNewDeptNo())) {
-                                if (duplicateManager) {
-                                    throw new InvalidDataException("Employee was previously a manager in this department!");
-                                }
-                                // updated department but still manager: close manager entry, create new manager entry
-                                currentDeptManager.setToDate(today);
-                                em.merge(currentDeptManager);
-                                // add new entry into manager table, with new department
-                                DeptManager newManager = new DeptManager(emp, targetDept, today, LocalDate.of(9999, 01, 01));
-                                em.persist(newManager);
-                            }
-                        }
+                        // add new manager record
+                        DeptManager newManager = new DeptManager(emp, targetDept, today, LocalDate.of(9999, 01, 01));
+                        em.persist(newManager);
                     }
                 }
-
                 // if reach the end we can commit the changes we have done
                 tx.commit();
             } catch (InvalidDataException e) {
                 tx.rollback();
                 throw new InvalidDataException(e.getMessage());
             } catch (Exception e) {
+                tx.rollback();
                 throw new RuntimeException(e);
             }
         }
     }
-
-//        LocalDate today = LocalDate.now();
-//
-//        try (EntityManager em = JPAUtil.getEntityManager()) {
-//            EntityTransaction tx = em.getTransaction();
-//            tx.begin();
-//
-//            Employee emp = em.find(Employee.class, request.getEmpNo());
-//            if (emp == null) {
-//                tx.rollback();
-//                throw new IllegalArgumentException("Employee not found");
-//            }
-//
-//            // force initialization of collections to avoid LazyInitializationException
-//            emp.getSalaryList().size();
-//            emp.getTitleList().size();
-//            emp.getDeptEmpList().size();
-//            emp.getDeptManagerList().size();
-//
-//            // Get current title and salary
-//            List<Title> titles = emp.getTitleList();
-//            Title currentTitle = titles.isEmpty() ? null : titles.get(titles.size() - 1);
-//
-//            List<Salary> salaries = emp.getSalaryList();
-//            Salary currentSalary = salaries.isEmpty() ? null : salaries.get(salaries.size() - 1);
-//
-//            String oldTitle = (currentTitle != null) ? currentTitle.getTitle() : "";
-//            int oldSalary = (currentSalary != null) ? currentSalary.getSalary() : 0;
-//            String newTitle = request.getNewTitle();
-//            int newSalary = request.getNewSalary();
-//
-//            // --- Validation logic ---
-//            if (newSalary <= 0) {
-//                tx.rollback();
-//                throw new IllegalArgumentException("0 or negative salary not allowed");
-//            }
-//
-//            if (oldTitle.equals(newTitle)) {
-//                if (newSalary < oldSalary) {
-//                    tx.rollback();
-//                    throw new IllegalArgumentException("Salary Decrement Not Allowed");
-//                }
-//            } else { // title is different
-//                if (newSalary < oldSalary) {
-//                    tx.rollback();
-//                    throw new IllegalArgumentException("Salary Decrement Not Allowed");
-//                }
-//            }
-//
-//            // --- Close current title ---
-//            if (currentTitle != null) {
-//                currentTitle.setToDate(today.minusDays(1));
-//                em.merge(currentTitle);
-//            }
-//
-//            // --- Insert new title ---
-//            Title newTitleEntity = new Title();
-//            newTitleEntity.setEmployee(emp); // Employee object, matches @IdClass mapping
-//            newTitleEntity.setTitle(newTitle);
-//            newTitleEntity.setFromDate(today);
-//            newTitleEntity.setToDate(LocalDate.of(9999, 12, 31));
-//            //em.persist(newTitleEntity);
-//            em.merge(newTitleEntity);
-//
-//            // --- Close current salary & insert new one ---
-//            if (newSalary > 0) {
-//                if (currentSalary != null) {
-//                    currentSalary.setToDate(today.minusDays(1));
-//                    em.merge(currentSalary);
-//                }
-//
-//                Salary newSalaryEntity = new Salary();
-//                newSalaryEntity.setEmployee(emp); // Employee object, matches @IdClass mapping
-//                newSalaryEntity.setSalary(newSalary);
-//                newSalaryEntity.setFromDate(today);
-//                newSalaryEntity.setToDate(LocalDate.of(9999, 12, 31));
-//                em.persist(newSalaryEntity);
-//            }
-//
-//            tx.commit();
-//        }
-//    }
-
 }
