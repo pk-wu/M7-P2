@@ -16,14 +16,6 @@ import java.time.LocalDate;
 @IdClass(DeptEmpId.class)
 public class DeptEmp {
 
-//    /**
-//     * employee number primary composite key, with JsonIgnore preventing serialization
-//     */
-//    @Id
-//    @Column(name = "emp_no")
-//    @JsonIgnore
-//    private int empNo;
-//
     // mapping
     /**
      * maps many-to-one relationship to Employee
@@ -80,18 +72,11 @@ public class DeptEmp {
     /**
      * Parameterized constructor to create DeptEmp instance
      *
-     * @param employee    employee unique ID int
+     * @param employee    employee object
      * @param deptNo   department unique ID String
      * @param fromDate first date working in department
      * @param toDate   last date working in department
      */
-//    public DeptEmp(int empNo, String deptNo, LocalDate fromDate, LocalDate toDate) {
-//        this.empNo = empNo;
-//        this.deptNo = deptNo;
-//        this.fromDate = fromDate;
-//        this.toDate = toDate;
-//    }
-
     public DeptEmp(Employee employee, String deptNo, LocalDate fromDate, LocalDate toDate) {
         this.employee = employee;
         this.deptNo = deptNo;
@@ -99,24 +84,6 @@ public class DeptEmp {
         this.toDate = toDate;
     }
     // getters and setters
-
-//    /**
-//     * retrieves employee number
-//     *
-//     * @return employee number
-//     */
-//    public int getEmpNo() {
-//        return empNo;
-//    }
-//
-//    /**
-//     * sets the employee number
-//     *
-//     * @param empNo the new employee number
-//     */
-//    public void setEmpNo(int empNo) {
-//        this.empNo = empNo;
-//    }
 
     /**
      * retrieves the department number
@@ -220,7 +187,6 @@ public class DeptEmp {
                 ", deptNo='" + deptNo + '\'' +
                 ", fromDate=" + fromDate +
                 ", toDate=" + toDate +
-                ", department=" + department +
                 '}';
     }
 }

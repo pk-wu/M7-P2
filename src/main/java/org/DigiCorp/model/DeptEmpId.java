@@ -14,7 +14,7 @@ public class DeptEmpId implements Serializable {
      * employee number that forms part of the primary composite key
      */
 //    private int empNo;
-    private Employee employee;
+    private int employee;
     /**
      * department number that forms part of the primary composite key
      */
@@ -32,7 +32,7 @@ public class DeptEmpId implements Serializable {
      * @param employee  the employee's id number
      * @param deptNo the department's id string
      */
-    public DeptEmpId(Employee employee, String deptNo) {
+    public DeptEmpId(int employee, String deptNo) {
         this.employee = employee;
         this.deptNo = deptNo;
     }
@@ -44,7 +44,7 @@ public class DeptEmpId implements Serializable {
      *
      * @return the employee number
      */
-    public Employee getEmpNo() {
+    public int getEmpNo() {
         return employee;
     }
 
@@ -53,7 +53,7 @@ public class DeptEmpId implements Serializable {
      *
      * @param employee the new employee number
      */
-    public void setEmpNo(Employee employee) {
+    public void setEmpNo(int employee) {
         this.employee = employee;
     }
 
@@ -80,7 +80,7 @@ public class DeptEmpId implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof DeptEmpId deptEmpId)) return false;
-        return Objects.equals(employee, deptEmpId.employee) && Objects.equals(deptNo, deptEmpId.deptNo);
+        return employee == deptEmpId.employee && Objects.equals(deptNo, deptEmpId.deptNo);
     }
 
     @Override

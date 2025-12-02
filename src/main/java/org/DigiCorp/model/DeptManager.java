@@ -18,14 +18,6 @@ import java.time.LocalDate;
 @IdClass(DeptManagerId.class)
 public class DeptManager {
 
-//    /**
-//     * employee number that is part of primary composite key
-//     * JsonIgnore annotation prevents JSON serialization
-//     */
-//    @Id
-//    @Column(name = "emp_no")
-//    @JsonIgnore
-//    private int empNo;
     // mapping
     /**
      * maps many-to-one relationship to Employee entity,
@@ -92,32 +84,8 @@ public class DeptManager {
         this.fromDate = fromDate;
         this.toDate = toDate;
     }
-    //    public DeptManager(int empNo, String deptNo, LocalDate fromDate, LocalDate toDate) {
-//        this.empNo = empNo;
-//        this.deptNo = deptNo;
-//        this.fromDate = fromDate;
-//        this.toDate = toDate;
-//    }
 
     // getters and setters
-
-    /**
-     * retrieves employee number
-     *
-     * @return the employee number
-     */
-//    public int getEmpNo() {
-//        return empNo;
-//    }
-//
-//    /**
-//     * sets the employee number
-//     *
-//     * @param empNo the new employee number
-//     */
-//    public void setEmpNo(int empNo) {
-//        this.empNo = empNo;
-//    }
 
     /**
      * retrieves the department number
@@ -221,7 +189,6 @@ public class DeptManager {
                 ", deptNo='" + deptNo + '\'' +
                 ", fromDate=" + fromDate +
                 ", toDate=" + toDate +
-                ", department=" + department +
                 '}';
     }
 }

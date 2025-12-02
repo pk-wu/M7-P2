@@ -14,7 +14,7 @@ public class SalaryId implements Serializable {
     /**
      * employee entity reference, part of primary composite key
      */
-    private int employee; // maps to Employee.empNo
+    private int employee;
 
     /**
      * employee's start date of salary, part of primary composite key
@@ -78,26 +78,12 @@ public class SalaryId implements Serializable {
 
     // equals and hashcode
 
-    /**
-     * compares object for equality
-     *
-     * @param o object to be compared for equality
-     * @return boolean true if equal and false otherwise
-     */
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof SalaryId)) return false;
-        SalaryId that = (SalaryId) o;
-        return employee == that.employee &&
-                Objects.equals(fromDate, that.fromDate);
+        if (!(o instanceof SalaryId salaryId)) return false;
+        return employee == salaryId.employee && Objects.equals(fromDate, salaryId.fromDate);
     }
 
-    /**
-     * returns hash code value for the object
-     *
-     * @return hash code value for this object
-     */
     @Override
     public int hashCode() {
         return Objects.hash(employee, fromDate);

@@ -12,7 +12,7 @@ public class DeptManagerId implements Serializable {
     /**
      * employee that is a primary composite key
      */
-    private Employee employee;
+    private int employee;
     /**
      * department number that is a primary composite key
      */
@@ -30,7 +30,7 @@ public class DeptManagerId implements Serializable {
      * @param employee  employee unique ID int
      * @param deptNo department unique ID string
      */
-    public DeptManagerId(Employee employee, String deptNo) {
+    public DeptManagerId(int employee, String deptNo) {
         this.employee = employee;
         this.deptNo = deptNo;
     }
@@ -42,10 +42,7 @@ public class DeptManagerId implements Serializable {
      *
      * @return the employee number
      */
-//    public int getEmpNo() {
-//        return empNo;
-//    }
-    public Employee getEmployee() {
+    public int getEmpNo() {
         return employee;
     }
 
@@ -54,10 +51,7 @@ public class DeptManagerId implements Serializable {
      *
      * @param employee the new employee number
      */
-//    public void setEmpNo(int empNo) {
-//        this.empNo = empNo;
-//    }
-    public void setEmployee(Employee employee) {
+    public void setEmpNo(int employee) {
         this.employee = employee;
     }
 
@@ -79,13 +73,10 @@ public class DeptManagerId implements Serializable {
         this.deptNo = deptNo;
     }
 
-    // equals and hashcode
-
-
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof DeptManagerId that)) return false;
-        return Objects.equals(employee, that.employee) && Objects.equals(deptNo, that.deptNo);
+        return employee == that.employee && Objects.equals(deptNo, that.deptNo);
     }
 
     @Override

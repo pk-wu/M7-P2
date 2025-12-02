@@ -313,10 +313,6 @@ public class Employee {
                 ", lastName='" + lastName + '\'' +
                 ", gender='" + gender + '\'' +
                 ", hireDate=" + hireDate +
-                ", salaryList=" + salaryList +
-                ", titleList=" + titleList +
-                ", deptEmpList=" + deptEmpList +
-                ", deptManagerList=" + deptManagerList +
                 '}';
     }
 }

@@ -14,7 +14,7 @@ public class TitleId implements Serializable {
     /**
      * Employee object, part of composite primary key
      */
-    private Employee employee;
+    private int employee;
 
     /**
      * job title, part of primary composite key
@@ -39,7 +39,7 @@ public class TitleId implements Serializable {
      * @param title    job title
      * @param fromDate starting date of the job title
      */
-    public TitleId(Employee employee, String title, LocalDate fromDate) {
+    public TitleId(int employee, String title, LocalDate fromDate) {
         this.employee = employee;
         this.title = title;
         this.fromDate = fromDate;
@@ -52,16 +52,16 @@ public class TitleId implements Serializable {
      *
      * @return the Employee object
      */
-    public Employee getEmployee() {
+    public int getEmployee() {
         return employee;
     }
 
     /**
      * sets the Employee object
      *
-     * @param employee the new Employee object
+     * @param employee the new Employee no
      */
-    public void setEmployee(Employee employee) {
+    public void setEmployee(int employee) {
         this.employee = employee;
     }
 
@@ -101,25 +101,13 @@ public class TitleId implements Serializable {
         this.fromDate = fromDate;
     }
 
-    /**
-     * compares object and checks for equality
-     *
-     * @param o object to be compared for equality
-     * @return boolean true if equal, false otherwise
-     */
+
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof TitleId titleId)) return false;
-        return Objects.equals(employee, titleId.employee)
-                && Objects.equals(title, titleId.title)
-                && Objects.equals(fromDate, titleId.fromDate);
+        return employee == titleId.employee && Objects.equals(title, titleId.title) && Objects.equals(fromDate, titleId.fromDate);
     }
 
-    /**
-     * returns hash code value for the object
-     *
-     * @return hash code value for this object
-     */
     @Override
     public int hashCode() {
         return Objects.hash(employee, title, fromDate);
