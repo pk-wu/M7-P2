@@ -211,7 +211,7 @@ public class EmployeeDAO {
                     && !request.getNewDeptNo().equals(currentDeptEmp.getDeptNo());
 
             boolean titleChanged = request.getNewTitle() != null
-                    && !request.getNewTitle().equals(currentTitle.getTitle());
+                    && !request.getNewTitle().equalsIgnoreCase(currentTitle.getTitle());
 
             if (!salaryChanged && !deptChanged && !titleChanged) {
                 throw new InvalidDataException("Data supplied matches existing data");
@@ -293,21 +293,32 @@ public class EmployeeDAO {
 //                    }
                     // CHECK: if ONLY title is being updated, title must change
                     if (!salaryChanged && !deptChanged) {
-                        if (currentTitle.getTitle().equals(request.getNewTitle())) {
+                        if (currentTitle.getTitle().equalsIgnoreCase(request.getNewTitle())) {
                             throw new InvalidDataException("Employee already has title " + request.getNewTitle());
                         }
                     }
 
                     // CHECK: disallow updating if the composite key we try to use already exists
                     for (Title title : titles) {
-                        if (title.getTitle().equals(request.getNewTitle()) && title.getFromDate().isEqual(today)) {
+                        if (title.getTitle().equalsIgnoreCase(request.getNewTitle()) && title.getFromDate().isEqual(today)) {
                             throw new InvalidDataException("Employee has already been promoted to this title today");
                         }
                     }
                     // Perform title update:
                     // update old title entry, insert the new title entry
+
+                    // ensure title input is title case
+                    StringBuilder titleCasedTitle = new StringBuilder();
+                    for (String word : request.getNewTitle().split("\\s+")) {
+                        if (!word.isEmpty()) {
+                            titleCasedTitle.append(Character.toUpperCase(word.charAt(0)))
+                                    .append(word.substring(1).toLowerCase())
+                                    .append(" ");
+                        }
+                    }
+
                     currentTitle.setToDate(today);
-                    Title newTitle = new Title(emp, request.getNewTitle(), today, LocalDate.of(9999, 01, 01));
+                    Title newTitle = new Title(emp, titleCasedTitle.toString().trim(), today, LocalDate.of(9999, 01, 01));
                     em.merge(currentTitle);
                     em.persist(newTitle);
 
