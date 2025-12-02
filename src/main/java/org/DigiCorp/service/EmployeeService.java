@@ -133,8 +133,7 @@ public class EmployeeService {
             return Response.status(Response.Status.CREATED)
                     .entity("Employee promoted successfully")
                     .build();
-        } catch (IllegalArgumentException e) {
-            // thrown if employee not found or title is invalid
+        }catch (InvalidDataException e) {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity("Promotion failed: " + e.getMessage())
                     .build();
