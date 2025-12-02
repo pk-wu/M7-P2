@@ -31,24 +31,24 @@ public class Helper {
     public static void validateRequest(EmployeePromotionRequest request) throws InvalidDataException {
         // CHECK: Employee was provided
         if (request.getEmpNo() == null) {
-            throw new InvalidDataException("Employee was not provided");
+            throw new InvalidDataException("Employee was not provided", 400);
         }
         // CHECK: at least one value is being updated
         if (request.getNewSalary() == null && request.getNewTitle() == null && request.getNewDeptNo() == null) {
-            throw new InvalidDataException("No data was supplied");
+            throw new InvalidDataException("No data was supplied", 400);
         }
         // CHECK: salary value is positive
         if (request.getNewSalary() != null && request.getNewSalary() < 1) {
-            throw new InvalidDataException("Salary must be positive");
+            throw new InvalidDataException("Salary must be positive", 400);
         }
         // CHECK: given department exists
         if (request.getNewDeptNo() != null && !isDepartmentValid(request.getNewDeptNo())) {
-            throw new InvalidDataException("Department " + request.getNewDeptNo() + " does not exist!");
+            throw new InvalidDataException("Department " + request.getNewDeptNo() + " does not exist!", 404);
         }
         // CHECK: input title more than 0 less than 51
         if (request.getNewTitle() != null) {
             if (request.getNewTitle().isEmpty() || request.getNewTitle().length() > 50) {
-                throw new InvalidDataException("New Title length invalid");
+                throw new InvalidDataException("New Title length invalid", 400);
             }
         }
     }

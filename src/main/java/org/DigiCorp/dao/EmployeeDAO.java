@@ -56,9 +56,8 @@ public class EmployeeDAO {
      * @param deptNo The department number to filter
      * @param page   requested page number for filtering
      * @return paginated List of EmployeeRecordDTO objects, capped at 20 objects
-     * @throws InvalidDataException Exception thrown when input data invalid
      */
-    public List<EmployeeRecordDTO> getAllEmployeeRecordsList(String deptNo, int page) throws InvalidDataException {
+    public List<EmployeeRecordDTO> getAllEmployeeRecordsList(String deptNo, int page) {
 
         try (EntityManager em = JPAUtil.getEntityManager()) {
             // execute named query to retrieve List of EmployeeDTO records
@@ -83,7 +82,7 @@ public class EmployeeDAO {
             // CHECK: Employee must exist
             Employee emp = em.find(Employee.class, request.getEmpNo());
             if (emp == null) {
-                throw new InvalidDataException("Employee does not exist");
+                throw new InvalidDataException("Employee does not exist", 404);
             }
 
             // Get current title, salary, deptEmp, and deptManager
@@ -102,7 +101,7 @@ public class EmployeeDAO {
 
             // CHECK: if Employee must be current employee
             if (currentSalary.getToDate().compareTo(LocalDate.of(9999, 01, 01)) != 0) {
-                throw new InvalidDataException("Employee is no longer with the company");
+                throw new InvalidDataException("Employee is no longer with the company", 400);
             }
             // CHECK: is there any real update
             boolean salaryChanged = request.getNewSalary() != null
@@ -116,7 +115,7 @@ public class EmployeeDAO {
 
             // CHECK: if supplied data same as existing data, no changes made, throw error
             if (!salaryChanged && !deptChanged && !titleChanged) {
-                throw new InvalidDataException("Data supplied matches existing data");
+                throw new InvalidDataException("Data supplied matches existing data", 400);
             }
 
             // wrap up remaining logic in transaction, so if exceptions are thrown we can roll it back
@@ -132,13 +131,13 @@ public class EmployeeDAO {
                     // CHECK: if ONLY salary is being updated, salary must go up
                     if (!titleChanged && !deptChanged) {
                         if (currentSalary.getSalary() >= request.getNewSalary()) {
-                            throw new InvalidDataException("New salary must be greater than previous salary");
+                            throw new InvalidDataException("New salary must be greater than previous salary", 400);
                         }
                     }
                     // CHECK: disallow updating if the composite key we try to use already exists
                     for (Salary salary : salaries) {
                         if (salary.getFromDate().isEqual(today)) {
-                            throw new InvalidDataException("Salary value has already been updated today");
+                            throw new InvalidDataException("Salary value has already been updated today", 400);
                         }
                     }
                     // Perform salary update:
@@ -151,22 +150,17 @@ public class EmployeeDAO {
 
                 // -- update departmentNo ---
                 if (deptChanged) {
-                    // CHECK: departmentNo supplied exists
-                    if (em.find(Department.class, request.getNewDeptNo()) == null) {
-                        throw new InvalidDataException("Department " + request.getNewDeptNo() + " does not exist.");
-                    }
-
                     // CHECK: if ONLY department is being updated, departmentNo must change
                     if (!titleChanged && !salaryChanged) {
                         if (currentDeptEmp.getDeptNo().equals(request.getNewDeptNo())) {
-                            throw new InvalidDataException("Employee already in department " + request.getNewDeptNo());
+                            throw new InvalidDataException("Employee already in department " + request.getNewDeptNo(), 400);
                         }
                     }
 
                     // CHECK: disallow updating if the composite key we try to use already exists
                     for (DeptEmp deptEmp : deptEmps) {
                         if (deptEmp.getDeptNo().equals(request.getNewDeptNo())) {
-                            throw new InvalidDataException("Employee cannot return to their previous department");
+                            throw new InvalidDataException("Employee cannot return to their previous department", 400);
                         }
                     }
                     // Perform deptEmp update:
@@ -194,7 +188,7 @@ public class EmployeeDAO {
                     }
                     // throw error if target department already has entry
                     if (duplicateManager) {
-                        throw new InvalidDataException("Employee was previously a manager in this department!");
+                        throw new InvalidDataException("Employee was previously a manager in this department!", 400);
                     }
 
                     // close current manager record
@@ -215,14 +209,14 @@ public class EmployeeDAO {
                     // CHECK: if ONLY title is being updated, title must change
                     if (!salaryChanged && !deptChanged) {
                         if (currentTitle.getTitle().equals(inputTitle)) {
-                            throw new InvalidDataException("Employee already has title " + inputTitle);
+                            throw new InvalidDataException("Employee already has title " + inputTitle, 400);
                         }
                     }
 
                     // CHECK: disallow updating if the composite key we try to use already exists
                     for (Title title : titles) {
                         if (title.getTitle().equals(inputTitle) && title.getFromDate().isEqual(today)) {
-                            throw new InvalidDataException("Employee has already been promoted to this title today");
+                            throw new InvalidDataException("Employee has already been promoted to this title today", 400);
                         }
                     }
                     // Perform title update:
@@ -254,7 +248,7 @@ public class EmployeeDAO {
                             }
                         }
                         if (duplicateManager) {
-                            throw new InvalidDataException("Employee was previously a manager in this department!");
+                            throw new InvalidDataException("Employee was previously a manager in this department!", 400);
                         }
                         // add new manager record
                         DeptManager newManager = new DeptManager(emp, targetDept, today, LocalDate.of(9999, 01, 01));
@@ -265,7 +259,7 @@ public class EmployeeDAO {
                 tx.commit();
             } catch (InvalidDataException e) {
                 tx.rollback();
-                throw new InvalidDataException(e.getMessage());
+                throw new InvalidDataException(e.getMessage(), e.getStatusCode());
             } catch (Exception e) {
                 tx.rollback();
                 throw new RuntimeException(e);

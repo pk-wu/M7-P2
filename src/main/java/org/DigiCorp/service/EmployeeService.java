@@ -98,30 +98,20 @@ public class EmployeeService {
             @QueryParam("page") @DefaultValue("1") int page) {
         // CHECK: page number has to be greater than or equal to 1
         if (page < 1) {
-            return Response.status(400)
-                    .entity("Page number must be greater than or equal to 1!")
-                    .build();
+            return Response.status(400).entity("Page number must be greater than or equal to 1!").build();
         }
-
-        try {
-            // CHECK: if department doesn't exist, throw InvalidDataException
-            if (!Helper.isDepartmentValid(departmentNo)) {
-                throw new InvalidDataException("Department " + departmentNo + " does not exist.");
-            }
-            // retrieve the list of employee records
-            List<EmployeeRecordDTO> empRecords = employeeDAO.getAllEmployeeRecordsList(departmentNo, page);
-            // CHECK: retrieved page is empty we return appropriate message
-            if (empRecords.isEmpty()) {
-                return Response.ok()
-                        .entity("Page index contains no employee records!").build();
-            }
-            return Response.ok().entity(empRecords).build();
-        } catch (InvalidDataException e) {
-            // if department does not exist, exception is caught
-            return Response.status(400)
-                    .entity(e.getMessage())
-                    .build();
+        // CHECK: if department doesn't exist, throw InvalidDataException
+        if (!Helper.isDepartmentValid(departmentNo)) {
+            return Response.status(404).entity("Department " + departmentNo + " does not exist.").build();
         }
+        // retrieve the list of employee records
+        List<EmployeeRecordDTO> empRecords = employeeDAO.getAllEmployeeRecordsList(departmentNo, page);
+        // CHECK: if retrieved page is empty we return appropriate message
+        if (empRecords.isEmpty()) {
+            return Response.ok()
+                    .entity("Page index contains no employee records!").build();
+        }
+        return Response.ok().entity(empRecords).build();
     }
 
     // endpoint #4
@@ -144,7 +134,7 @@ public class EmployeeService {
                     .build();
         } catch (InvalidDataException e) {
             // catch exceptions we throw if promotion fails, return a response
-            return Response.status(Response.Status.BAD_REQUEST)
+            return Response.status(e.getStatusCode())
                     .entity("Promotion failed: " + e.getMessage())
                     .build();
         } catch (Exception e) {

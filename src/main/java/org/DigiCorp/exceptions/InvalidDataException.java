@@ -10,8 +10,15 @@ public class InvalidDataException extends Exception {
      * @param message detail message describing the error
      */
 
+    private final int statusCode;
 
-    public InvalidDataException(String message) {
+
+    public InvalidDataException(String message, int statusCode) {
         super(message);
+        this.statusCode = statusCode;
+    }
+
+    public int getStatusCode() {
+        return statusCode;
     }
 }
