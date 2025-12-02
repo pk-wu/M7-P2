@@ -9,6 +9,8 @@ public class InvalidDataException extends Exception {
      *
      * @param message detail message describing the error
      */
+
+
     public InvalidDataException(String message) {
         super(message);
     }
