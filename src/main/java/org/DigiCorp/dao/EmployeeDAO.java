@@ -92,6 +92,7 @@ public class EmployeeDAO {
             }
 
             // Get current title, salary, deptEmp, and deptManager
+            //TODO: optimize this assignment (null check done in service)
             List<Title> titles = emp.getTitleList();
             Title currentTitle = titles.isEmpty() ? null : titles.get(titles.size() - 1);
 
@@ -109,6 +110,7 @@ public class EmployeeDAO {
             if (currentSalary.getToDate().compareTo(LocalDate.of(9999, 01, 01)) != 0) {
                 throw new InvalidDataException("Employee is no longer with the company", 400);
             }
+            //TODO: optimize this assignment (null check done in service)
             // CHECK: is there any real update
             boolean salaryChanged = request.getNewSalary() != null
                     && request.getNewSalary() != currentSalary.getSalary();
@@ -121,7 +123,7 @@ public class EmployeeDAO {
 
             // CHECK: if supplied data same as existing data, no changes made, throw error
             if (!salaryChanged && !deptChanged && !titleChanged) {
-                throw new InvalidDataException("Data supplied matches existing data", 400);
+                throw new InvalidDataException("Provided data matches existing data, no changes requested", 400);
             }
 
             // CHECK: if dept supplied, does it belong in the department list?

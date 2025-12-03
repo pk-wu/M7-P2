@@ -22,24 +22,21 @@ public class Helper {
 
     // helper method to validate the JSON request body
     public static void validateRequest(EmployeePromotionRequest request) throws InvalidDataException {
-        // CHECK: Employee was provided
-        if (request.getEmpNo() == null) {
-            throw new InvalidDataException("Employee was not provided", 400);
-        }
-        // CHECK: at least one value is being updated
-        if (request.getNewSalary() == null && request.getNewTitle() == null && request.getNewDeptNo() == null) {
-            throw new InvalidDataException("No data was supplied", 400);
+        // CHECK: ALL fields must be provided
+        if (request.getEmpNo() == null ||
+                request.getNewTitle() == null ||
+                request.getNewDeptNo() == null ||
+                request.getNewSalary() == null) {
+            throw new InvalidDataException("Please provide all 4: empNo, newSalary, newTitle, newDeptNo", 400);
         }
         // CHECK: salary value is positive
-        if (request.getNewSalary() != null && request.getNewSalary() < 1) {
+        if (request.getNewSalary() < 1) {
             throw new InvalidDataException("Salary must be positive", 400);
         }
 
         // CHECK: input title more than 0 less than 51
-        if (request.getNewTitle() != null) {
-            if (request.getNewTitle().isEmpty() || request.getNewTitle().length() > 50) {
-                throw new InvalidDataException("New Title length invalid", 400);
-            }
+        if (request.getNewTitle().isEmpty() || request.getNewTitle().length() > 50) {
+            throw new InvalidDataException("New Title length invalid", 400);
         }
     }
 }
