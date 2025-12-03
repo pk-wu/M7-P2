@@ -25,8 +25,8 @@ The backend interfaces with the **MySQL Employees Sample Database** (running on 
 src/main/java/org/DigiCorp/
  ├── model/        # JPA entities
  ├── dto/          # DTOs for lean JSON responses
- ├── service/      # Business logic & queries
- └── resource/     # JAX-RS endpoints
+ ├── DAO/          # Business logic & queries
+ └── service/      # JAX-RS endpoints
 
 src/main/resources/
  └── META-INF/persistence.xml
