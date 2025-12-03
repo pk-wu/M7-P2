@@ -56,10 +56,15 @@ public class EmployeeDAO {
      * @param deptNo The department number to filter
      * @param page   requested page number for filtering
      * @return paginated List of EmployeeRecordDTO objects, capped at 20 objects
+     * @throws InvalidDataException throws this if any data validation fails
      */
-    public List<EmployeeRecordDTO> getAllEmployeeRecordsList(String deptNo, int page) {
+    public List<EmployeeRecordDTO> getAllEmployeeRecordsList(String deptNo, int page) throws InvalidDataException {
 
         try (EntityManager em = JPAUtil.getEntityManager()) {
+            // CHECK: if dept supplied, does it belong in the department list?
+            if (em.find(Department.class, deptNo) == null) {
+                throw new InvalidDataException("Department " + deptNo + " does not exist.", 404);
+            }
             // execute named query to retrieve List of EmployeeDTO records
             // we supply deptNo as a key, convert the page to 0-index, cap the results to 20
             List<EmployeeRecordDTO> results = em.createNamedQuery("Employee.getDepartmentEmployeeRecords", EmployeeRecordDTO.class)
@@ -74,6 +79,7 @@ public class EmployeeDAO {
     /**
      * Logic for endpoint #4:
      * promotes employee
+     *
      * @param request JSON request passed in via postman
      * @throws InvalidDataException thrown when failed to promote for any reason
      */
@@ -108,7 +114,7 @@ public class EmployeeDAO {
                     && request.getNewSalary() != currentSalary.getSalary();
 
             boolean deptChanged = request.getNewDeptNo() != null
-                    && !request.getNewDeptNo().equals(currentDeptEmp.getDeptNo());
+                    && !request.getNewDeptNo().toLowerCase().equals(currentDeptEmp.getDeptNo());
 
             boolean titleChanged = request.getNewTitle() != null
                     && !request.getNewTitle().equalsIgnoreCase(currentTitle.getTitle());
@@ -116,6 +122,13 @@ public class EmployeeDAO {
             // CHECK: if supplied data same as existing data, no changes made, throw error
             if (!salaryChanged && !deptChanged && !titleChanged) {
                 throw new InvalidDataException("Data supplied matches existing data", 400);
+            }
+
+            // CHECK: if dept supplied, does it belong in the department list?
+            if (request.getNewDeptNo() != null) {
+                if (em.find(Department.class, request.getNewDeptNo()) == null) {
+                    throw new InvalidDataException("Department " + request.getNewDeptNo() + " does not exist.", 404);
+                }
             }
 
             // wrap up remaining logic in transaction, so if exceptions are thrown we can roll it back
@@ -129,11 +142,11 @@ public class EmployeeDAO {
                 if (salaryChanged) {
 
                     // CHECK: if ONLY salary is being updated, salary must go up
-                    if (!titleChanged && !deptChanged) {
-                        if (currentSalary.getSalary() >= request.getNewSalary()) {
-                            throw new InvalidDataException("New salary must be greater than previous salary", 400);
-                        }
-                    }
+//                    if (!titleChanged && !deptChanged) {
+//                        if (currentSalary.getSalary() >= request.getNewSalary()) {
+//                            throw new InvalidDataException("New salary must be greater than previous salary", 400);
+//                        }
+//                    }
                     // CHECK: disallow updating if the composite key we try to use already exists
                     for (Salary salary : salaries) {
                         if (salary.getFromDate().isEqual(today)) {
@@ -152,21 +165,21 @@ public class EmployeeDAO {
                 if (deptChanged) {
                     // CHECK: if ONLY department is being updated, departmentNo must change
                     if (!titleChanged && !salaryChanged) {
-                        if (currentDeptEmp.getDeptNo().equals(request.getNewDeptNo())) {
-                            throw new InvalidDataException("Employee already in department " + request.getNewDeptNo(), 400);
+                        if (currentDeptEmp.getDeptNo().equalsIgnoreCase(request.getNewDeptNo().toLowerCase())) {
+                            throw new InvalidDataException("Employee already in department " + request.getNewDeptNo().toLowerCase(), 400);
                         }
                     }
 
                     // CHECK: disallow updating if the composite key we try to use already exists
                     for (DeptEmp deptEmp : deptEmps) {
-                        if (deptEmp.getDeptNo().equals(request.getNewDeptNo())) {
+                        if (deptEmp.getDeptNo().equalsIgnoreCase(request.getNewDeptNo().toLowerCase())) {
                             throw new InvalidDataException("Employee cannot return to their previous department", 400);
                         }
                     }
                     // Perform deptEmp update:
                     // update old deptEmp entry, insert the new deptEmp entry
                     currentDeptEmp.setToDate(today);
-                    DeptEmp newDeptEmp = new DeptEmp(emp, request.getNewDeptNo(), today, LocalDate.of(9999, 01, 01));
+                    DeptEmp newDeptEmp = new DeptEmp(emp, request.getNewDeptNo().toLowerCase(), today, LocalDate.of(9999, 01, 01));
                     em.merge(currentDeptEmp);
                     em.persist(newDeptEmp);
 
@@ -176,7 +189,7 @@ public class EmployeeDAO {
                 // we handle here because the title does not change
                 if (currentTitle.getTitle().equals("Manager") && !titleChanged && deptChanged) {
                     // get the new department the manager is transferring to
-                    String targetDept = request.getNewDeptNo();
+                    String targetDept = request.getNewDeptNo().toLowerCase();
 
                     // check if the department we want to transfer to already has entry
                     boolean duplicateManager = false;
@@ -237,7 +250,7 @@ public class EmployeeDAO {
                     if (inputTitle.equals("Manager")) {
                         // we need targetDept handles situation where new dept not supplied
                         String targetDept = (request.getNewDeptNo() != null)
-                                ? request.getNewDeptNo()
+                                ? request.getNewDeptNo().toLowerCase()
                                 : currentDeptEmp.getDeptNo();
                         // CHECK: disallow updating if the composite key we try to use already exists
                         boolean duplicateManager = false;
@@ -251,7 +264,7 @@ public class EmployeeDAO {
                             throw new InvalidDataException("Employee was previously a manager in this department!", 400);
                         }
                         // add new manager record
-                        DeptManager newManager = new DeptManager(emp, targetDept, today, LocalDate.of(9999, 01, 01));
+                        DeptManager newManager = new DeptManager(emp, targetDept.toLowerCase(), today, LocalDate.of(9999, 01, 01));
                         em.persist(newManager);
                     }
                 }
