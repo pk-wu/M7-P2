@@ -3,11 +3,8 @@ package org.DigiCorp.helper;
 import org.DigiCorp.dto.EmployeePromotionRequest;
 import org.DigiCorp.exceptions.InvalidDataException;
 
-import java.util.List;
-
 public class Helper {
 
-    private static final List<String> DEPARTMENTS_LIST = List.of("d001", "d002", "d003", "d004", "d005", "d006", "d007", "d008", "d009");
 
     // convert String into TitleCase equivalent
     public static String toTitleCase(String inputString) {
@@ -22,10 +19,6 @@ public class Helper {
         return tempTitle.toString().trim();
     }
 
-    // helper method to check if given department exists
-    public static boolean isDepartmentValid(String dept) {
-        return DEPARTMENTS_LIST.contains(dept);
-    }
 
     // helper method to validate the JSON request body
     public static void validateRequest(EmployeePromotionRequest request) throws InvalidDataException {
@@ -41,10 +34,7 @@ public class Helper {
         if (request.getNewSalary() != null && request.getNewSalary() < 1) {
             throw new InvalidDataException("Salary must be positive", 400);
         }
-        // CHECK: given department exists
-        if (request.getNewDeptNo() != null && !isDepartmentValid(request.getNewDeptNo())) {
-            throw new InvalidDataException("Department " + request.getNewDeptNo() + " does not exist!", 404);
-        }
+
         // CHECK: input title more than 0 less than 51
         if (request.getNewTitle() != null) {
             if (request.getNewTitle().isEmpty() || request.getNewTitle().length() > 50) {
