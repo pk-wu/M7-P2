@@ -92,34 +92,28 @@ public class EmployeeDAO {
             }
 
             // Get current title, salary, deptEmp, and deptManager
-            //TODO: optimize this assignment (null check done in service)
             List<Title> titles = emp.getTitleList();
-            Title currentTitle = titles.isEmpty() ? null : titles.get(titles.size() - 1);
+            Title currentTitle = titles.getLast();
 
             List<Salary> salaries = emp.getSalaryList();
-            Salary currentSalary = salaries.isEmpty() ? null : salaries.get(salaries.size() - 1);
+            Salary currentSalary = salaries.getLast();
 
             List<DeptEmp> deptEmps = emp.getDeptEmpList();
-            DeptEmp currentDeptEmp = deptEmps.isEmpty() ? null : deptEmps.get(deptEmps.size() - 1);
+            DeptEmp currentDeptEmp = deptEmps.getLast();
 
             List<DeptManager> deptManagers = emp.getDeptManagerList();
-            DeptManager currentDeptManager = deptManagers.isEmpty() ? null : deptManagers.get(deptManagers.size() - 1);
+            DeptManager currentDeptManager = deptManagers.isEmpty() ? null : deptManagers.getLast();
 
 
             // CHECK: if Employee must be current employee
             if (currentSalary.getToDate().compareTo(LocalDate.of(9999, 01, 01)) != 0) {
                 throw new InvalidDataException("Employee is no longer with the company", 400);
             }
-            //TODO: optimize this assignment (null check done in service)
+
             // CHECK: is there any real update
-            boolean salaryChanged = request.getNewSalary() != null
-                    && request.getNewSalary() != currentSalary.getSalary();
-
-            boolean deptChanged = request.getNewDeptNo() != null
-                    && !request.getNewDeptNo().toLowerCase().equals(currentDeptEmp.getDeptNo());
-
-            boolean titleChanged = request.getNewTitle() != null
-                    && !request.getNewTitle().equalsIgnoreCase(currentTitle.getTitle());
+            boolean salaryChanged = request.getNewSalary() != currentSalary.getSalary();
+            boolean deptChanged = !request.getNewDeptNo().equalsIgnoreCase(currentDeptEmp.getDeptNo());
+            boolean titleChanged = !request.getNewTitle().equalsIgnoreCase(currentTitle.getTitle());
 
             // CHECK: if supplied data same as existing data, no changes made, throw error
             if (!salaryChanged && !deptChanged && !titleChanged) {
@@ -142,13 +136,6 @@ public class EmployeeDAO {
                 // --- update salary ---
                 // attempt salary update if supplied in the payload
                 if (salaryChanged) {
-
-                    // CHECK: if ONLY salary is being updated, salary must go up
-//                    if (!titleChanged && !deptChanged) {
-//                        if (currentSalary.getSalary() >= request.getNewSalary()) {
-//                            throw new InvalidDataException("New salary must be greater than previous salary", 400);
-//                        }
-//                    }
                     // CHECK: disallow updating if the composite key we try to use already exists
                     for (Salary salary : salaries) {
                         if (salary.getFromDate().isEqual(today)) {
@@ -167,7 +154,7 @@ public class EmployeeDAO {
                 if (deptChanged) {
                     // CHECK: if ONLY department is being updated, departmentNo must change
                     if (!titleChanged && !salaryChanged) {
-                        if (currentDeptEmp.getDeptNo().equalsIgnoreCase(request.getNewDeptNo().toLowerCase())) {
+                        if (currentDeptEmp.getDeptNo().equalsIgnoreCase(request.getNewDeptNo())) {
                             throw new InvalidDataException("Employee already in department " + request.getNewDeptNo().toLowerCase(), 400);
                         }
                     }
@@ -250,10 +237,7 @@ public class EmployeeDAO {
                     }
                     // Non-Manager -> Manager
                     if (inputTitle.equals("Manager")) {
-                        // we need targetDept handles situation where new dept not supplied
-                        String targetDept = (request.getNewDeptNo() != null)
-                                ? request.getNewDeptNo().toLowerCase()
-                                : currentDeptEmp.getDeptNo();
+                        String targetDept = request.getNewDeptNo().toLowerCase();
                         // CHECK: disallow updating if the composite key we try to use already exists
                         boolean duplicateManager = false;
                         for (DeptManager deptMgr : deptManagers) {
@@ -266,7 +250,7 @@ public class EmployeeDAO {
                             throw new InvalidDataException("Employee was previously a manager in this department!", 400);
                         }
                         // add new manager record
-                        DeptManager newManager = new DeptManager(emp, targetDept.toLowerCase(), today, LocalDate.of(9999, 01, 01));
+                        DeptManager newManager = new DeptManager(emp, targetDept, today, LocalDate.of(9999, 01, 01));
                         em.persist(newManager);
                     }
                 }
