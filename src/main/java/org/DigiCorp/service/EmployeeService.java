@@ -100,18 +100,18 @@ public class EmployeeService {
         if (page < 1) {
             return Response.status(400).entity("Page number must be greater than or equal to 1!").build();
         }
-        // CHECK: if department doesn't exist, throw InvalidDataException
-        if (!Helper.isDepartmentValid(departmentNo)) {
-            return Response.status(404).entity("Department " + departmentNo + " does not exist.").build();
+        try {
+            // retrieve the list of employee records
+            List<EmployeeRecordDTO> empRecords = employeeDAO.getAllEmployeeRecordsList(departmentNo, page);
+            // CHECK: if retrieved page is empty we return appropriate message
+            if (empRecords.isEmpty()) {
+                return Response.ok()
+                        .entity("Page index contains no employee records!").build();
+            }
+            return Response.ok().entity(empRecords).build();
+        } catch (InvalidDataException e) {
+            return Response.status(e.getStatusCode()).entity(e.getMessage()).build();
         }
-        // retrieve the list of employee records
-        List<EmployeeRecordDTO> empRecords = employeeDAO.getAllEmployeeRecordsList(departmentNo, page);
-        // CHECK: if retrieved page is empty we return appropriate message
-        if (empRecords.isEmpty()) {
-            return Response.ok()
-                    .entity("Page index contains no employee records!").build();
-        }
-        return Response.ok().entity(empRecords).build();
     }
 
     // endpoint #4
@@ -122,7 +122,7 @@ public class EmployeeService {
     public Response promoteEmployee(EmployeePromotionRequest request) {
         // try to process promotion request, throw & catch errors if unsuccessful
         try {
-            // call helper method to validate
+            // call helper method to validate, throws exception if invalid
             Helper.validateRequest(request);
 
             // call your service to promote the employee
