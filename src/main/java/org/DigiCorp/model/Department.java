@@ -16,16 +16,16 @@ import java.util.List;
 @Table(name = "departments")
 public class Department {
     /**
-     * deptNo is the number of the department.
-     * It is the primary key for the entity, maps to dept_no column
+     * The unique identification number of the department (Primary Key).
+     * Maps to the dept_no column.
      */
     @Id
     @Column(name = "dept_no")
     private String deptNo;
 
     /**
-     * deptName is the name of the department.
-     * It maps to dept_name
+     * The name of the department.
+     * Maps to the dept_name column.
      */
     @Column(name = "dept_name")
     private String deptName;

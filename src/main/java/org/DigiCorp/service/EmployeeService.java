@@ -6,7 +6,7 @@ import jakarta.ws.rs.core.Response;
 import org.DigiCorp.dto.EmployeePromotionRequest;
 import org.DigiCorp.dto.EmployeeRecordDTO;
 import org.DigiCorp.exceptions.InvalidDataException;
-import org.DigiCorp.helper.Helper;
+import org.DigiCorp.util.Helper;
 import org.DigiCorp.model.Department;
 import org.DigiCorp.model.Employee;
 import org.DigiCorp.dao.EmployeeDAO;
@@ -14,13 +14,14 @@ import org.DigiCorp.dao.EmployeeDAO;
 import java.util.List;
 
 /**
- * EmployeeResource class provides the REST endpoints as per /api/employees/
+ * Class defines the REST endpoints.
+ * All paths are rooted under /api/employees
  */
 @Path("/employees")
 public class EmployeeService {
 
     /**
-     * enables us to access business logic in EmployeeService
+     * Data Access Object (DAO) used to access the business logic layer.
      */
     private final EmployeeDAO employeeDAO;
 
@@ -33,10 +34,10 @@ public class EmployeeService {
 
     /**
      * Endpoint #1: Get all departments
-     * Retrieves list of all Department records
+     * Retrieves a list of all Department records available
      * Usage (GET): http://localhost:8090/M7_P2_war_exploded/api/employees/getAllDepartments
      *
-     * @return response containing JSON of list of Department objects
+     * @return A Response containing a JSON list of Department objects
      */
     @GET
     @Path("/getAllDepartments")
@@ -48,13 +49,12 @@ public class EmployeeService {
     }
 
     /**
-     * Endpoint #2: Get specific Employee record
-     * Retrieves full employee record and related details i.e. salaries, titles, departments.
-     * If employee cannot be found, error message is printed
+     * Endpoint #2: Retrieves specified full Employee record
+     *
      * Usage (GET): http://localhost:8090/M7_P2_war_exploded/api/employees/getEmployeeRecord/?empNo=99999
      *
-     * @param empNo Employee number to be retrieved, taken in as a Query Parameter
-     * @return JSON list of Employee Records or failure message if employee does not exist
+     * @param empNo The employee number to be retrieved, supplied as a Query Parameter.
+     * @return Returns Employee JSON object or a string failure message if the employee does not exist
      */
     @GET
     @Path("/getEmployeeRecord")
@@ -114,7 +114,23 @@ public class EmployeeService {
         }
     }
 
-    // endpoint #4
+    /**
+     * Endpoint #4: Promote Employee
+     * Processes a request to update an employee's salary/department/title in a single transaction.
+     *
+     * Usage (GET): http://localhost:8090/M7_P2_war_exploded/api/employees/promote
+     * Input JSON format:
+     * {
+     *     "empNo":11004,
+     *     "newDeptNo":"d007",
+     *     "newSalary": 65349,
+     *     "newTitle": "Senior Engineer"
+     * }
+     *
+     * @param request EmployeePromotionRequest JSON payload containing the employee ID and new details.
+     * @return Returns HTTP 201 Created on success, HTTP 400/404 on validation/data error,
+     * or HTTP 500 on unexpected internal errors.
+     */
     @POST
     @Path("/promote")
     @Consumes(MediaType.APPLICATION_JSON)

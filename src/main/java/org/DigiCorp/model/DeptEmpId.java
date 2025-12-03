@@ -13,7 +13,6 @@ public class DeptEmpId implements Serializable {
     /**
      * employee number that forms part of the primary composite key
      */
-//    private int empNo;
     private int employee;
     /**
      * department number that forms part of the primary composite key
@@ -77,12 +76,23 @@ public class DeptEmpId implements Serializable {
 
     // equals and hashcode
 
+    /**
+     * Performs comparison to specified object.
+     * boolean true if exact match and false otherwise
+     *
+     * @param o The object to be compared against
+     * @return true if the objects are the same; false otherwise.
+     */
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof DeptEmpId deptEmpId)) return false;
         return employee == deptEmpId.employee && Objects.equals(deptNo, deptEmpId.deptNo);
     }
-
+    /**
+     * Returns a hash code
+     *
+     * @return A hash code value for this object.
+     */
     @Override
     public int hashCode() {
         return Objects.hash(employee, deptNo);

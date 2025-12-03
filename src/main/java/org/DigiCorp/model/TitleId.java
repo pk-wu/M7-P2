@@ -12,7 +12,7 @@ import java.util.Objects;
 public class TitleId implements Serializable {
 
     /**
-     * Employee object, part of composite primary key
+     * Employee id, part of composite primary key
      */
     private int employee;
 
@@ -35,7 +35,7 @@ public class TitleId implements Serializable {
     /**
      * parameterized constructor for creating new TitleId instance
      *
-     * @param employee Employee object
+     * @param employee Employee id
      * @param title    job title
      * @param fromDate starting date of the job title
      */
@@ -48,16 +48,16 @@ public class TitleId implements Serializable {
     // getters and setters
 
     /**
-     * retrieve the Employee object
+     * retrieve the Employee id
      *
-     * @return the Employee object
+     * @return the Employee id
      */
     public int getEmployee() {
         return employee;
     }
 
     /**
-     * sets the Employee object
+     * sets the Employee id
      *
      * @param employee the new Employee no
      */
@@ -101,13 +101,23 @@ public class TitleId implements Serializable {
         this.fromDate = fromDate;
     }
 
-
+    /**
+     * Performs comparison to specified object.
+     * boolean true if exact match and false otherwise
+     *
+     * @param o The object to be compared against
+     * @return true if the objects are the same; false otherwise.
+     */
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof TitleId titleId)) return false;
         return employee == titleId.employee && Objects.equals(title, titleId.title) && Objects.equals(fromDate, titleId.fromDate);
     }
-
+    /**
+     * Returns a hash code
+     *
+     * @return A hash code value for this object.
+     */
     @Override
     public int hashCode() {
         return Objects.hash(employee, title, fromDate);

@@ -10,7 +10,7 @@ import java.util.Objects;
  */
 public class DeptManagerId implements Serializable {
     /**
-     * employee that is a primary composite key
+     * employee id number that is a primary composite key
      */
     private int employee;
     /**
@@ -73,12 +73,23 @@ public class DeptManagerId implements Serializable {
         this.deptNo = deptNo;
     }
 
+    /**
+     * Performs comparison to specified object.
+     * boolean true if exact match and false otherwise
+     *
+     * @param o The object to be compared against
+     * @return true if the objects are the same; false otherwise.
+     */
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof DeptManagerId that)) return false;
         return employee == that.employee && Objects.equals(deptNo, that.deptNo);
     }
-
+    /**
+     * Returns a hash code
+     *
+     * @return A hash code value for this object.
+     */
     @Override
     public int hashCode() {
         return Objects.hash(employee, deptNo);

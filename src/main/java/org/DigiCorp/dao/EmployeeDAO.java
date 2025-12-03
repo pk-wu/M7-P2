@@ -5,7 +5,7 @@ import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.TypedQuery;
 import org.DigiCorp.dto.*;
 import org.DigiCorp.exceptions.InvalidDataException;
-import org.DigiCorp.helper.Helper;
+import org.DigiCorp.util.Helper;
 import org.DigiCorp.model.*;
 import org.DigiCorp.util.JPAUtil;
 
@@ -13,16 +13,18 @@ import java.time.LocalDate;
 import java.util.List;
 
 /**
- * class provides business logic, middleman between the resource class
- * and the database (manages transactions, executes queries)
+ * Provides business logic for managing Employee data.
+ * This class acts as a Data Access Object (DAO), managing transactions and
+ * executing JPA queries to interact with the database.
  */
 public class EmployeeDAO {
 
     /**
-     * Logic for endpoint #1:
-     * executes a named query to retrieve a list of Departments
+     * Endpoint #1
+     * Retrieves a list of all Department entities from the database by
+     * executing a named query
      *
-     * @return List of Department entities
+     * @return List of all Department entities.
      */
     public List<Department> findAllDepartments() {
         try (EntityManager em = JPAUtil.getEntityManager()) {
@@ -33,11 +35,13 @@ public class EmployeeDAO {
     }
 
     /**
-     * Logic for endpoint #2:
-     * method loads Employee entity and forces initialization, then returns it.
+     * Endpoint #2:
+     * Retrieves the complete record for a specific employee.
      *
-     * @param empNo the primary key of the Employee entity
-     * @return the Employee retrieved corresponding to the supplied key
+     * This method fetches full record Employee entity
+     *
+     * @param empNo The primary key Employee entity.
+     * @return The Employee entity corresponding to the supplied key, or null if not found.
      */
     public Employee getEmployeeRecords(int empNo) {
         try (EntityManager em = JPAUtil.getEntityManager()) {
@@ -49,14 +53,14 @@ public class EmployeeDAO {
 
 
     /**
-     * Logic for endpoint #3:
-     * executes a named query to retrieve paginated list of EmployeeDTO objects,
-     * given a specific department and page.
+     * Endpoint #3
+     * Retrieves a paginated list of employee records for a specific department
+     * by executing a named query
      *
-     * @param deptNo The department number to filter
-     * @param page   requested page number for filtering
-     * @return paginated List of EmployeeRecordDTO objects, capped at 20 objects
-     * @throws InvalidDataException throws this if any data validation fails
+     * @param deptNo The department number (e.g., 'd005') used to filter the employees.
+     * @param page   The requested page number (1-indexed). Results are capped at 20 per page.
+     * @return A paginated List of EmployeeRecordDTO objects.
+     * @throws InvalidDataException If the supplied deptNo does not correspond to an existing Department.
      */
     public List<EmployeeRecordDTO> getAllEmployeeRecordsList(String deptNo, int page) throws InvalidDataException {
 
@@ -77,11 +81,15 @@ public class EmployeeDAO {
     }
 
     /**
-     * Logic for endpoint #4:
-     * promotes employee
+     * Promotes an employee by updating their salary/department/title in a single transaction.
      *
-     * @param request JSON request passed in via postman
-     * @throws InvalidDataException thrown when failed to promote for any reason
+     * This method handles closes existing records by setting toDate to today
+     * and inserts new records into the by setting fromDate to today and toDate to '9999-01-01'
+     *
+     *
+     * @param request The EmployeePromotionRequest containing the empID, newSalary, newTitle, newDept
+     * @throws InvalidDataException Thrown when any promotion validation fails
+     * @throws RuntimeException     Thrown for unexpected database errors.
      */
     public void promoteEmployee(EmployeePromotionRequest request) throws InvalidDataException {
         try (EntityManager em = JPAUtil.getEntityManager()) {
@@ -110,7 +118,7 @@ public class EmployeeDAO {
                 throw new InvalidDataException("Employee is no longer with the company", 400);
             }
 
-            // CHECK: is there any real update
+            // boolean flags to detect if supplied input is different from current values
             boolean salaryChanged = request.getNewSalary() != currentSalary.getSalary();
             boolean deptChanged = !request.getNewDeptNo().equalsIgnoreCase(currentDeptEmp.getDeptNo());
             boolean titleChanged = !request.getNewTitle().equalsIgnoreCase(currentTitle.getTitle());

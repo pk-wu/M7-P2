@@ -12,7 +12,7 @@ import java.util.Objects;
  */
 public class SalaryId implements Serializable {
     /**
-     * employee entity reference, part of primary composite key
+     * int employee id number, part of primary composite key
      */
     private int employee;
 
@@ -77,13 +77,23 @@ public class SalaryId implements Serializable {
     }
 
     // equals and hashcode
-
+    /**
+     * Performs comparison to specified object.
+     * boolean true if exact match and false otherwise
+     *
+     * @param o The object to be compared against
+     * @return true if the objects are the same; false otherwise.
+     */
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof SalaryId salaryId)) return false;
         return employee == salaryId.employee && Objects.equals(fromDate, salaryId.fromDate);
     }
-
+    /**
+     * Returns a hash code
+     *
+     * @return A hash code value for this object.
+     */
     @Override
     public int hashCode() {
         return Objects.hash(employee, fromDate);

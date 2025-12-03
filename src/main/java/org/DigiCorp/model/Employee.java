@@ -7,7 +7,7 @@ import java.util.List;
 
 /**
  * This class represents employee table in database, storing employee attributes
- * and providing one-to-many mapping to salaries, titles, department & manager assignments.
+ * and providing one-to-many mapping to salaries, titles, department and manager assignments.
  */
 @Entity
 // named query to retrieve paginated list of employees in some given department

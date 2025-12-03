@@ -18,9 +18,11 @@ public class DeptEmp {
 
     // mapping
     /**
-     * maps many-to-one relationship to Employee
-     * is the foreign key mapping to emp_no
-     * JsonIgnore annotations prevents JSON serialization
+     * The Employee associated with this department record.
+     * This field is part of the composite primary key and maps the
+     * Many-to-One relationship to the employees table via emp_no
+     *
+     * @JsonIgnore prevents this object from being recursively serialized.
      */
     @Id
     @ManyToOne
